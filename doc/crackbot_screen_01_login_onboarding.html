@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CrackBot AI — 화면 설계서: 로그인 / 온보딩</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f5f4f0;
+  --color-background-danger: #FCEBEB;
+  --color-text-primary: #1a1a18;
+  --color-text-secondary: #5f5e5a;
+  --color-text-danger: #A32D2D;
+  --color-border-tertiary: rgba(0,0,0,0.10);
+  --color-border-secondary: rgba(0,0,0,0.18);
+  --color-border-primary: rgba(0,0,0,0.30);
+  --color-border-danger: #F09595;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background-primary: #1e1e1c;
+    --color-background-secondary: #2a2a27;
+    --color-background-danger: #501313;
+    --color-text-primary: #e8e6df;
+    --color-text-secondary: #9c9a92;
+    --color-text-danger: #F09595;
+    --color-border-tertiary: rgba(255,255,255,0.10);
+    --color-border-secondary: rgba(255,255,255,0.18);
+    --color-border-primary: rgba(255,255,255,0.30);
+    --color-border-danger: #A32D2D;
+  }
+}
+body {
+  font-family: var(--font-sans);
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+  padding: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.wrap { padding: 20px 0 32px; }
+.doc-title { font-size: 17px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; }
+.doc-sub { font-size: 12px; color: var(--color-text-secondary); display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 20px; }
+.screens-row { display: flex; gap: 16px; flex-wrap: wrap; justify-content: flex-start; }
+.screen-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; min-width: 180px; max-width: 220px; }
+.screen-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); letter-spacing: .04em; text-transform: uppercase; text-align: center; }
+.screen-id { font-size: 10px; color: var(--color-text-secondary); text-align: center; margin-top: 2px; }
+.phone { width: 200px; min-height: 400px; border-radius: 28px; border: 2px solid var(--color-border-secondary); background: var(--color-background-primary); overflow: hidden; display: flex; flex-direction: column; }
+.status-bar { height: 28px; background: var(--color-background-secondary); display: flex; align-items: center; justify-content: space-between; padding: 0 14px; flex-shrink: 0; }
+.status-time { font-size: 11px; font-weight: 500; color: var(--color-text-primary); }
+.status-icons { display: flex; gap: 4px; align-items: center; }
+.sig { width: 14px; height: 10px; display: flex; align-items: flex-end; gap: 1px; }
+.sig span { background: var(--color-text-primary); border-radius: 1px; }
+.bat { width: 18px; height: 10px; border: 1.5px solid var(--color-text-primary); border-radius: 2px; display: flex; align-items: center; padding: 1px; position: relative; }
+.bat::after { content: ''; position: absolute; right: -4px; top: 50%; transform: translateY(-50%); width: 2px; height: 5px; background: var(--color-text-primary); border-radius: 1px; }
+.bat-fill { height: 100%; background: var(--color-text-primary); border-radius: 1px; width: 70%; }
+.screen-body { flex: 1; padding: 16px 14px; display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
+.app-logo { text-align: center; margin: 8px 0 4px; }
+.logo-icon { width: 48px; height: 48px; border-radius: 14px; background: #1D9E75; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; }
+.logo-crack { width: 26px; height: 26px; position: relative; }
+.crack-line { position: absolute; top: 4px; left: 13px; width: 2px; height: 18px; background: #fff; transform: rotate(12deg); border-radius: 2px; }
+.crack-line2 { position: absolute; top: 10px; left: 8px; width: 2px; height: 12px; background: #fff; transform: rotate(-20deg); border-radius: 2px; }
+.app-name { font-size: 16px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 2px; }
+.app-tagline { font-size: 11px; color: var(--color-text-secondary); }
+.form-field { display: flex; flex-direction: column; gap: 3px; }
+.field-label { font-size: 10px; color: var(--color-text-secondary); font-weight: 500; }
+.field-input { height: 32px; border-radius: 7px; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); padding: 0 10px; font-size: 12px; color: var(--color-text-primary); }
+.field-input.focus { border-color: #1D9E75; background: var(--color-background-primary); }
+.field-input.error { border-color: var(--color-border-danger); }
+.btn-primary { height: 34px; border-radius: 8px; background: #1D9E75; border: none; color: #fff; font-size: 13px; font-weight: 500; display: flex; align-items: center; justify-content: center; cursor: pointer; width: 100%; }
+.btn-secondary { height: 34px; border-radius: 8px; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-secondary); color: var(--color-text-primary); font-size: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; width: 100%; gap: 6px; }
+.divider-row { display: flex; align-items: center; gap: 6px; }
+.divider-line { flex: 1; height: 0.5px; background: var(--color-border-tertiary); }
+.divider-text { font-size: 10px; color: var(--color-text-secondary); }
+.link-text { font-size: 11px; color: #0F6E56; text-align: center; cursor: pointer; }
+.error-msg { font-size: 10px; color: var(--color-text-danger); padding: 6px 8px; background: var(--color-background-danger); border-radius: 6px; border: 0.5px solid var(--color-border-danger); }
+.onboard-step { text-align: center; padding: 4px 0; }
+.step-dots { display: flex; justify-content: center; gap: 5px; margin-bottom: 10px; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-border-secondary); }
+.dot.active { background: #1D9E75; width: 16px; border-radius: 3px; }
+.step-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+.step-desc { font-size: 10px; color: var(--color-text-secondary); line-height: 1.5; }
+.permission-item { display: flex; align-items: center; gap: 8px; padding: 7px 9px; background: var(--color-background-secondary); border-radius: 8px; border: 0.5px solid var(--color-border-tertiary); }
+.perm-icon { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.perm-body { flex: 1; }
+.perm-title { font-size: 11px; font-weight: 500; color: var(--color-text-primary); }
+.perm-desc { font-size: 10px; color: var(--color-text-secondary); }
+.toggle { width: 28px; height: 16px; border-radius: 8px; background: #1D9E75; position: relative; flex-shrink: 0; }
+.toggle-thumb { width: 12px; height: 12px; border-radius: 50%; background: #fff; position: absolute; right: 2px; top: 2px; }
+.toggle.off { background: var(--color-border-secondary); }
+.toggle.off .toggle-thumb { right: auto; left: 2px; }
+.section-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); letter-spacing: .05em; text-transform: uppercase; margin: 20px 0 10px; }
+.spec-block { margin-bottom: 8px; padding: 14px 16px; background: var(--color-background-secondary); border-radius: 10px; border: 0.5px solid var(--color-border-tertiary); }
+.spec-block-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 8px; }
+.badge { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 20px; font-weight: 500; }
+.badge-teal { background: #E1F5EE; color: #0F6E56; }
+.badge-amber { background: #FAEEDA; color: #854F0B; }
+.spec-table { width: 100%; border-collapse: collapse; }
+.spec-row { border-bottom: 0.5px solid var(--color-border-tertiary); }
+.spec-row td { padding: 5px 0; font-size: 11px; vertical-align: top; }
+.spec-row td:first-child { color: var(--color-text-secondary); width: 100px; font-size: 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="doc-title">CrackBot AI — 화면 설계서</div>
+  <div class="doc-sub">
+    <span>화면 그룹 1: 로그인 / 온보딩</span>
+    <span>버전 v0.1</span>
+    <span>2026. 3. 25.</span>
+    <span>SCR-01 ~ SCR-05</span>
+  </div>
+
+  <div class="section-label">화면 목록</div>
+  <div class="screens-row">
+
+    <!-- SCR-01 스플래시 -->
+    <div class="screen-wrap">
+      <div class="screen-label">SCR-01</div>
+      <div class="screen-id">스플래시</div>
+      <div class="phone">
+        <div class="status-bar">
+          <span class="status-time">9:41</span>
+          <div class="status-icons">
+            <div class="sig"><span style="height:3px;width:2px"></span><span style="height:5px;width:2px"></span><span style="height:7px;width:2px"></span><span style="height:9px;width:2px"></span></div>
+            <div class="bat"><div class="bat-fill"></div></div>
+          </div>
+        </div>
+        <div class="screen-body" style="justify-content:center;align-items:center;gap:8px">
+          <div class="logo-icon" style="width:64px;height:64px;border-radius:18px">
+            <div class="logo-crack"><div class="crack-line"></div><div class="crack-line2"></div></div>
+          </div>
+          <div style="text-align:center">
+            <div class="app-name" style="font-size:18px">CrackBot AI</div>
+            <div class="app-tagline">건축물 안전점검 자동화</div>
+          </div>
+          <div style="margin-top:24px;width:80px;height:3px;border-radius:2px;background:var(--color-border-tertiary);overflow:hidden">
+            <div style="width:60%;height:100%;background:#1D9E75;border-radius:2px"></div>
+          </div>
+          <div style="font-size:10px;color:var(--color-text-secondary);margin-top:4px">로딩 중...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCR-02 로그인 -->
+    <div class="screen-wrap">
+      <div class="screen-label">SCR-02</div>
+      <div class="screen-id">로그인</div>
+      <div class="phone">
+        <div class="status-bar">
+          <span class="status-time">9:41</span>
+          <div class="status-icons">
+            <div class="sig"><span style="height:3px;width:2px"></span><span style="height:5px;width:2px"></span><span style="height:7px;width:2px"></span><span style="height:9px;width:2px"></span></div>
+            <div class="bat"><div class="bat-fill"></div></div>
+          </div>
+        </div>
+        <div class="screen-body">
+          <div class="app-logo">
+            <div class="logo-icon" style="width:40px;height:40px;border-radius:11px">
+              <div class="logo-crack" style="width:20px;height:20px">
+                <div class="crack-line" style="top:2px;left:10px;height:14px"></div>
+                <div class="crack-line2" style="top:7px;left:5px;height:9px"></div>
+              </div>
+            </div>
+            <div style="font-size:14px;font-weight:500;color:var(--color-text-primary)">CrackBot AI</div>
+          </div>
+          <div class="form-field">
+            <div class="field-label">이메일</div>
+            <div class="field-input">inspector@company.com</div>
+          </div>
+          <div class="form-field">
+            <div class="field-label">비밀번호</div>
+            <div class="field-input focus">••••••••</div>
+          </div>
+          <div class="btn-primary">로그인</div>
+          <div class="divider-row">
+            <div class="divider-line"></div>
+            <div class="divider-text">또는</div>
+            <div class="divider-line"></div>
+          </div>
+          <div class="btn-secondary">
+            <div style="width:14px;height:14px;border-radius:50%;background:var(--color-border-secondary)"></div>
+            Google로 로그인
+          </div>
+          <div class="link-text" style="margin-top:4px">비밀번호를 잊으셨나요?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCR-03 로그인 오류 -->
+    <div class="screen-wrap">
+      <div class="screen-label">SCR-03</div>
+      <div class="screen-id">로그인 오류</div>
+      <div class="phone">
+        <div class="status-bar">
+          <span class="status-time">9:41</span>
+          <div class="status-icons">
+            <div class="sig"><span style="height:3px;width:2px"></span><span style="height:5px;width:2px"></span><span style="height:7px;width:2px"></span><span style="height:9px;width:2px"></span></div>
+            <div class="bat"><div class="bat-fill"></div></div>
+          </div>
+        </div>
+        <div class="screen-body">
+          <div class="app-logo">
+            <div class="logo-icon" style="width:40px;height:40px;border-radius:11px">
+              <div class="logo-crack" style="width:20px;height:20px">
+                <div class="crack-line" style="top:2px;left:10px;height:14px"></div>
+                <div class="crack-line2" style="top:7px;left:5px;height:9px"></div>
+              </div>
+            </div>
+            <div style="font-size:14px;font-weight:500;color:var(--color-text-primary)">CrackBot AI</div>
+          </div>
+          <div class="form-field">
+            <div class="field-label">이메일</div>
+            <div class="field-input error">wrong@email.com</div>
+          </div>
+          <div class="form-field">
+            <div class="field-label">비밀번호</div>
+            <div class="field-input error">••••••</div>
+          </div>
+          <div class="error-msg">이메일 또는 비밀번호가 올바르지 않습니다.</div>
+          <div class="btn-primary">다시 시도</div>
+          <div class="link-text">비밀번호를 잊으셨나요?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCR-04 권한 설정 -->
+    <div class="screen-wrap">
+      <div class="screen-label">SCR-04</div>
+      <div class="screen-id">권한 설정</div>
+      <div class="phone">
+        <div class="status-bar">
+          <span class="status-time">9:41</span>
+          <div class="status-icons">
+            <div class="sig"><span style="height:3px;width:2px"></span><span style="height:5px;width:2px"></span><span style="height:7px;width:2px"></span><span style="height:9px;width:2px"></span></div>
+            <div class="bat"><div class="bat-fill"></div></div>
+          </div>
+        </div>
+        <div class="screen-body">
+          <div class="onboard-step">
+            <div class="step-dots">
+              <div class="dot active"></div>
+              <div class="dot"></div>
+              <div class="dot"></div>
+            </div>
+            <div class="step-title">앱 사용 권한 설정</div>
+            <div class="step-desc" style="margin-bottom:10px">현장 점검에 필요한 권한을 허용해 주세요</div>
+          </div>
+          <div class="permission-item">
+            <div class="perm-icon" style="background:#E1F5EE">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="5" r="2.5" stroke="#0F6E56" stroke-width="1.2"/><path d="M2 12c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="#0F6E56" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="perm-body"><div class="perm-title">카메라</div><div class="perm-desc">결함 촬영에 필요</div></div>
+            <div class="toggle"><div class="toggle-thumb"></div></div>
+          </div>
+          <div class="permission-item">
+            <div class="perm-icon" style="background:#E1F5EE">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2C4.8 2 3 3.8 3 6c0 3 4 7 4 7s4-4 4-7c0-2.2-1.8-4-4-4z" stroke="#0F6E56" stroke-width="1.2"/><circle cx="7" cy="6" r="1.2" fill="#0F6E56"/></svg>
+            </div>
+            <div class="perm-body"><div class="perm-title">위치 (GPS)</div><div class="perm-desc">사진 위치 자동 분류</div></div>
+            <div class="toggle"><div class="toggle-thumb"></div></div>
+          </div>
+          <div class="permission-item">
+            <div class="perm-icon" style="background:#F1EFE8">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="3" width="10" height="8" rx="1.5" stroke="#5F5E5A" stroke-width="1.2"/><path d="M5 3V2m4 1V2" stroke="#5F5E5A" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="perm-body"><div class="perm-title">저장소</div><div class="perm-desc">오프라인 임시 저장</div></div>
+            <div class="toggle off"><div class="toggle-thumb"></div></div>
+          </div>
+          <div class="btn-primary" style="margin-top:4px">다음</div>
+          <div class="link-text">나중에 설정</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCR-05 온보딩 완료 -->
+    <div class="screen-wrap">
+      <div class="screen-label">SCR-05</div>
+      <div class="screen-id">시작 완료</div>
+      <div class="phone">
+        <div class="status-bar">
+          <span class="status-time">9:41</span>
+          <div class="status-icons">
+            <div class="sig"><span style="height:3px;width:2px"></span><span style="height:5px;width:2px"></span><span style="height:7px;width:2px"></span><span style="height:9px;width:2px"></span></div>
+            <div class="bat"><div class="bat-fill"></div></div>
+          </div>
+        </div>
+        <div class="screen-body" style="justify-content:center;align-items:center;gap:10px;text-align:center">
+          <div class="step-dots" style="margin-bottom:4px">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot active"></div>
+          </div>
+          <div style="width:56px;height:56px;border-radius:50%;background:#E1F5EE;display:flex;align-items:center;justify-content:center">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L19 7" stroke="#0F6E56" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div>
+            <div style="font-size:15px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px">준비 완료!</div>
+            <div style="font-size:11px;color:var(--color-text-secondary);line-height:1.5">이제 건축물 결함을<br>AI로 자동 탐지할 수 있어요</div>
+          </div>
+          <div style="width:100%;padding:10px 12px;background:var(--color-background-secondary);border-radius:10px;border:0.5px solid var(--color-border-tertiary)">
+            <div style="font-size:10px;color:var(--color-text-secondary);margin-bottom:6px;text-align:left">주요 기능</div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:11px;color:var(--color-text-primary);display:flex;gap:6px;align-items:center"><span style="color:#1D9E75">✓</span> 6대 결함 AI 자동 탐지</div>
+              <div style="font-size:11px;color:var(--color-text-primary);display:flex;gap:6px;align-items:center"><span style="color:#1D9E75">✓</span> 균열 폭 0.1mm 단위 측정</div>
+              <div style="font-size:11px;color:var(--color-text-primary);display:flex;gap:6px;align-items:center"><span style="color:#1D9E75">✓</span> 보고서 자동 생성 (PDF/DOCX)</div>
+            </div>
+          </div>
+          <div class="btn-primary" style="width:100%;margin-top:4px">점검 시작하기</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 화면 흐름 -->
+  <div class="section-label" style="margin-top:28px">화면 흐름</div>
+  <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:12px 16px;background:var(--color-background-secondary);border-radius:10px;border:0.5px solid var(--color-border-tertiary)">
+    <span style="font-size:12px;padding:4px 10px;background:var(--color-background-primary);border-radius:6px;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary)">SCR-01 스플래시</span>
+    <span style="font-size:14px;color:var(--color-text-secondary)">→</span>
+    <span style="font-size:12px;padding:4px 10px;background:var(--color-background-primary);border-radius:6px;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary)">SCR-02 로그인</span>
+    <span style="font-size:11px;color:#A32D2D;padding:2px 6px;background:#FCEBEB;border-radius:4px">오류 시</span>
+    <span style="font-size:14px;color:var(--color-text-secondary)">→</span>
+    <span style="font-size:12px;padding:4px 10px;background:var(--color-background-primary);border-radius:6px;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary)">SCR-03 오류</span>
+    <span style="font-size:14px;color:var(--color-text-secondary)">→ 재입력</span>
+    <span style="font-size:11px;color:#0F6E56;padding:2px 6px;background:#E1F5EE;border-radius:4px">최초 로그인</span>
+    <span style="font-size:14px;color:var(--color-text-secondary)">→</span>
+    <span style="font-size:12px;padding:4px 10px;background:var(--color-background-primary);border-radius:6px;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary)">SCR-04 권한</span>
+    <span style="font-size:14px;color:var(--color-text-secondary)">→</span>
+    <span style="font-size:12px;padding:4px 10px;background:var(--color-background-primary);border-radius:6px;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary)">SCR-05 완료</span>
+  </div>
+
+  <!-- 스펙 -->
+  <div class="section-label" style="margin-top:24px">화면별 스펙</div>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div class="spec-block">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:11px;font-weight:500;color:var(--color-text-secondary)">SCR-02</span>
+        <span class="spec-block-title">로그인</span>
+        <span class="badge badge-teal">핵심</span>
+      </div>
+      <table class="spec-table">
+        <tr class="spec-row"><td>입력</td><td>이메일(필수), 비밀번호(필수)</td></tr>
+        <tr class="spec-row"><td>액션</td><td>로그인, Google SSO, 비밀번호 찾기</td></tr>
+        <tr class="spec-row"><td>성공</td><td>최초: SCR-04로 이동 / 재방문: 홈으로 이동</td></tr>
+        <tr class="spec-row"><td>실패</td><td>SCR-03 오류 메시지 인라인 표시</td></tr>
+        <tr class="spec-row"><td>유효성</td><td>이메일 형식 검사, 비밀번호 최소 8자</td></tr>
+      </table>
+    </div>
+    <div class="spec-block">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:11px;font-weight:500;color:var(--color-text-secondary)">SCR-04</span>
+        <span class="spec-block-title">권한 설정</span>
+        <span class="badge badge-amber">최초 1회</span>
+      </div>
+      <table class="spec-table">
+        <tr class="spec-row"><td>권한</td><td>카메라(필수), 위치(필수), 저장소(선택)</td></tr>
+        <tr class="spec-row"><td>필수 거부 시</td><td>재요청 모달 표시, 거부 유지 시 기능 제한 안내</td></tr>
+        <tr class="spec-row"><td>저장 방식</td><td>AsyncStorage에 권한 승인 여부 기록</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>

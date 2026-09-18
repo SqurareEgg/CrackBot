@@ -1,0 +1,52 @@
+# Node / frontend build
+node_modules/
+frontend/dist/
+frontend/frontend.log
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# env / secrets
+.env
+.env.local
+
+# runtime data
+backend/crackbot.db
+backend/uploads/
+backend/reports/
+*.log
+
+# 사전학습 가중치 (자동 다운로드 가능)
+Crack Detection(6.8)/yolov8n.pt
+Crack Detection(6.8)/yolo26n.pt
+
+# Roboflow 데이터셋 (라이선스상 재배포 지양, 용량 큼)
+Crack Detection(6.8)/Crack-1/
+
+# YOLO 학습 실험 기록 (최종 모델만 별도 유지)
+Crack Detection(6.8)/runs/detect/train/
+Crack Detection(6.8)/runs/detect/train2/
+Crack Detection(6.8)/runs/detect/train3/
+Crack Detection(6.8)/runs/detect/train4/
+Crack Detection(6.8)/runs/detect/train5/
+Crack Detection(6.8)/runs/detect/train6/
+Crack Detection(6.8)/runs/detect/train7/
+Crack Detection(6.8)/runs/detect/train8/
+Crack Detection(6.8)/runs/detect/train9/
+Crack Detection(6.8)/runs/detect/train10/
+Crack Detection(6.8)/runs/detect/train11/
+Crack Detection(6.8)/runs/detect/train12/weights/last.pt
+
+# 데모 이미지(용량 큰 원본, 필요 시 별도 공유)
+Crack Detection(6.8)/demo_images/
+
+# IDE / local
+.claude/
+.idea/
+
+# 빈 폴더
+Crack Detection(6.8)/%DEPLOY%/
+*.log.err

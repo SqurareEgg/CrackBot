@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CrackBot AI — 화면 설계서: 보고서 생성·조회</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f5f4f0;
+  --color-text-primary: #1a1a18;
+  --color-text-secondary: #5f5e5a;
+  --color-border-tertiary: rgba(0,0,0,0.10);
+  --color-border-secondary: rgba(0,0,0,0.18);
+  --color-border-primary: rgba(0,0,0,0.30);
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background-primary: #1e1e1c;
+    --color-background-secondary: #2a2a27;
+    --color-text-primary: #e8e6df;
+    --color-text-secondary: #9c9a92;
+    --color-border-tertiary: rgba(255,255,255,0.10);
+    --color-border-secondary: rgba(255,255,255,0.18);
+    --color-border-primary: rgba(255,255,255,0.30);
+  }
+}
+body { font-family: var(--font-sans); background: var(--color-background-primary); color: var(--color-text-primary); padding: 24px; max-width: 1000px; margin: 0 auto; }
+.wrap { padding: 20px 0 32px; }
+.doc-title { font-size: 17px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; }
+.doc-sub { font-size: 12px; color: var(--color-text-secondary); display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 20px; }
+.screens-row { display: flex; gap: 16px; flex-wrap: wrap; }
+.screen-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; min-width: 180px; max-width: 220px; }
+.screen-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); letter-spacing: .04em; text-transform: uppercase; }
+.screen-id { font-size: 10px; color: var(--color-text-secondary); }
+.phone { width: 200px; border-radius: 28px; border: 2px solid var(--color-border-secondary); background: var(--color-background-primary); overflow: hidden; display: flex; flex-direction: column; }
+.status-bar { height: 28px; background: var(--color-background-secondary); display: flex; align-items: center; justify-content: space-between; padding: 0 14px; flex-shrink: 0; }
+.status-time { font-size: 11px; font-weight: 500; color: var(--color-text-primary); }
+.status-icons { display: flex; gap: 4px; align-items: center; }
+.sig { width: 14px; height: 10px; display: flex; align-items: flex-end; gap: 1px; }
+.sig span { background: var(--color-text-primary); border-radius: 1px; }
+.bat { width: 18px; height: 10px; border: 1.5px solid var(--color-text-primary); border-radius: 2px; display: flex; align-items: center; padding: 1px; position: relative; }
+.bat::after { content: ''; position: absolute; right: -4px; top: 50%; transform: translateY(-50%); width: 2px; height: 5px; background: var(--color-text-primary); border-radius: 1px; }
+.bat-fill { height: 100%; background: var(--color-text-primary); border-radius: 1px; width: 70%; }
+.topbar { padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.topbar-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+.back-btn { width: 24px; height: 24px; border-radius: 6px; background: var(--color-background-secondary); display: flex; align-items: center; justify-content: center; }
+.content-area { flex: 1; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
+.badge { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 20px; font-weight: 500; }
+.badge-teal { background: #E1F5EE; color: #0F6E56; }
+.badge-amber { background: #FAEEDA; color: #854F0B; }
+.badge-red { background: #FCEBEB; color: #A32D2D; }
+.badge-blue { background: #E6F1FB; color: #185FA5; }
+.report-card { background: var(--color-background-secondary); border-radius: 9px; border: 0.5px solid var(--color-border-tertiary); padding: 9px 10px; }
+.report-icon { width: 32px; height: 40px; border-radius: 4px; background: #E6F1FB; border: 0.5px solid #B5D4F4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: relative; }
+.report-icon::after { content: ''; position: absolute; top: 0; right: 0; width: 8px; height: 8px; background: #B5D4F4; border-radius: 0 4px 0 4px; }
+.doc-page { background: #fff; border: 0.5px solid var(--color-border-secondary); border-radius: 4px; padding: 8px; display: flex; flex-direction: column; gap: 5px; }
+.doc-line { height: 5px; border-radius: 2px; background: var(--color-border-tertiary); }
+.doc-line.title { height: 7px; background: #B4B2A9; width: 70%; }
+.doc-img { height: 36px; border-radius: 3px; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); }
+.section-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); letter-spacing: .05em; text-transform: uppercase; margin: 24px 0 10px; }
+.spec-block { margin-bottom: 8px; padding: 14px 16px; background: var(--color-background-secondary); border-radius: 10px; border: 0.5px solid var(--color-border-tertiary); }
+.spec-block-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 8px; }
+.spec-table { width: 100%; border-collapse: collapse; }
+.spec-row { border-bottom: 0.5px solid var(--color-border-tertiary); }
+.spec-row td { padding: 5px 0; font-size: 11px; vertical-align: top; }
+.spec-row td:first-child { color: var(--color-text-secondary); width: 100px; font-size: 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="doc-title">CrackBot AI — 화면 설계서</div>
+  <div class="doc-sub">
+    <span>화면 그룹 4: 보고서 생성·조회</span>
+    <span>버전 v0.1</span>
+    <span>2026. 3. 25.</span>
+    <span>SCR-14 ~ SCR-17</span>
+  </div>
+
+  <div class="section-label">화면 목록</div>
+  <div class="screens-row">
+
+    <!-- SCR-14 보고서 생성 설정 -->
+    <div class="screen-wrap">
+      <div class="screen-label">SCR-14</div>
+      <div class="screen-id">보고서 생성</div>
+      <div class="phone">
+        <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons"><div class="sig"><span style="height:3px;width:2px"></span><span style="height:5px;width:2px"></span><span style="height:7px;width:2px"></span><span style="height:9px;width:2px"></span></div><div class="bat"><div class="bat-fill"></div></div></div></div>
+        <div class="topbar">
+          <div class="back-btn"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M6.5 2L3.5 5L6.5 8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+          <div class="topbar-title">보고서 생성</div>
+          <div></div>
+        </div>
+        <div class="content-area" style="gap:7px">
+          <div style="padding:9px 10px;background:var(--color-background-secondary);border-radius:9px;border:0.5px solid var(--color-border-tertiary)">
+            <div style="font-size:11px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px">논현동 상가 외벽 점검</div>
+            <div style="display:flex;gap:6px">
+              <div style="flex:1;text-align:center"><div style="font-size:9px;color:var(--color-text-secondary)">사진</div><div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">34장</div></div>
+              <div style="flex:1;text-align:center"><div style="font-size:9px;color:var(--color-text-secondary)">결함</div><div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">10개</div></div>
+              <div style="flex:1;text-align:center"><div style="font-size:9px;color:var(--color-text-secondary)">등급</div><div style="font-size:13px;font-weight:500;color:#A32D2D">D</div></div>
+            </div>
+          </div>
+          <div style="font-size:11px;font-weight:500;color:var(--color-text-primary)">출력 형식</div>
+          <div style="display:flex;gap:6px">
+            <div style="flex:1;padding:7px;border-radius:8px;border:1.5px solid #1D9E75;background:#E1F5EE;text-align:center;cursor:pointer"><div style="font-size:11px;font-weight:500;color:#0F6E56">PDF</div><div style="font-size:9px;color:#0F6E56">배포용</div></div>
+            <div style="flex:1;padding:7px;border-radius:8px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);text-align:center;cursor:pointer"><div style="font-size:11px;font-weight:500;color:var(--color-text-primary)">DOCX</div><div style="font-size:9px;color:var(--color-text-secondary)">편집용</div></div>
+            <div style="flex:1;padding:7px;border-radius:8px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);text-align:center;cursor:pointer"><div style="font-size:11px;font-weight:500;color:var(--color-text-primary)">둘 다</div><div style="font-size:9px;color:var(--color-text-secondary)">PDF+DOCX</div></div>
+          </div>
+          <div style="font-size:11px;font-weight:500;color:var(--color-text-primary)">양식 선택</div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="display:flex;align-items:center;gap:7px;padding:7px 9px;background:#E1F5EE;border-radius:7px;border:0.5px solid #5DCAA5">
+              <div style="width:10px;height:10px;border-radius:50%;border:2px solid #0F6E56;display:flex;align-items:center;justify-content:center"><div style="width:4px;height:4px;border-radius:50%;background:#0F6E56"></div></div>
+              <div style="font-size:11px;color:#0F6E56">국토안전관리원 표준 양식</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:7px;padding:7px 9px;background:var(--color-background-secondary);border-radius:7px;border:0.5px solid var(--color-border-tertiary)">
+              <div style="width:10px;height:10px;border-radius:50%;border:1.5px solid var(--color-border-secondary)"></div>
+              <div style="font-size:11px;color:var(--color-text-secondary)">간이 요약 보고서</div>
+            </div>
+          </div>
+          <button style="width:100%;height:34px;border-radius:8px;background:#1D9E75;border:none;color:#fff;font-size:13px;font-weight:500;cursor:pointer;margin-top:2px">보고서 생성 요청</button>
+          <div style="font-size:10px;color:var(--color-text-secondary);text-align:center">생성 완료 시 푸시 알림으로 안내됩니다</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCR-15 생성 중 -->
+    <div class="screen-wrap">
+      <div class="screen-label">SCR-15</div>
+      <div class="screen-id">생성 중</div>
+      <div class="phone">
+        <div class="status-bar"><span class="status-time">9:43</span><div class="status-icons"><div class="sig"><span style="height:3px;width:2px"></span><span style="height:5px;width:2px"></span><span style="height:7px;width:2px"></span><span style="height:9px;width:2px"></span></div><div class="bat"><div class="bat-fill"></div></div></div></div>
+        <div class="topbar">
+          <div class="back-btn"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M6.5 2L3.5 5L6.5 8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+          <div class="topbar-title">보고서 생성 중</div>
+          <div></div>
+        </div>
+        <div class="content-area" style="justify-content:center;align-items:center;text-align:center;gap:12px">
+          <div style="width:52px;height:52px;border-radius:14px;background:#E1F5EE;display:flex;align-items:center;justify-content:center">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z" stroke="#0F6E56" stroke-width="1.5"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="#0F6E56" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px">보고서 생성 중...</div>
+            <div style="font-size:11px;color:var(--color-text-secondary)">잠시만 기다려 주세요</div>
+          </div>
+          <div style="width:100%;display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-secondary)"><span>탐지 결과 집계</span><span style="color:#1D9E75;font-size:10px">완료</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-secondary)"><span>양식 스키마 매핑</span><span style="color:#1D9E75;font-size:10px">완료</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-secondary)"><span>PDF 렌더링</span><span style="font-size:10px">진행 중...</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--color-border-secondary)"><span>파일 업로드</span><span style="font-size:10px">대기</span></div>
+          </div>
+          <div style="width:100%;height:4px;background:var(--color-border-tertiary);border-radius:2px;overflow:hidden"><div style="width:70%;height:100%;background:#1D9E75;border-radius:2px"></div></div>
+          <div style="font-size:10px;color:var(--color-text-secondary)">완료 후 푸시 알림을 보내드립니다<br>다른 작업을 계속하셔도 됩니다</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCR-16 보고서 목록 -->
+    <div class="screen-wrap">
+      <div class="screen-label">SCR-16</div>
+      <div class="screen-id">보고서 목록</div>
+      <div class="phone">
+        <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons"><div class="sig"><span style="height:3px;width:2px"></span><span style="height:5px;width:2px"></span><span style="height:7px;width:2px"></span><span style="height:9px;width:2px"></span></div><div class="bat"><div class="bat-fill"></div></div></div></div>
+        <div class="topbar"><div class="topbar-title">보고서</div><div style="font-size:10px;color:var(--color-text-secondary)">총 8건</div></div>
+        <div class="content-area" style="gap:6px">
+          <div class="report-card" style="display:flex;align-items:flex-start;gap:8px">
+            <div class="report-icon"><svg width="14" height="16" viewBox="0 0 14 16" fill="none"><path d="M9 1H3a1.5 1.5 0 0 0-1.5 1.5v11A1.5 1.5 0 0 0 3 15h8a1.5 1.5 0 0 0 1.5-1.5V5.5L9 1z" stroke="#185FA5" stroke-width="1.2"/><path d="M9 1v4.5H12.5M4.5 9h5M4.5 12h3" stroke="#185FA5" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+            <div style="flex:1">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px"><div style="font-size:11px;font-weight:500;color:var(--color-text-primary)">논현동 상가 외벽</div><span class="badge badge-red">D등급</span></div>
+              <div style="font-size:10px;color:var(--color-text-secondary);margin-bottom:4px">2026.03.25 생성 · PDF</div>
+              <div style="display:flex;gap:4px">
+                <button style="flex:1;height:24px;border-radius:5px;background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);font-size:10px;color:var(--color-text-primary);cursor:pointer">미리보기</button>
+                <button style="flex:1;height:24px;border-radius:5px;background:#E1F5EE;border:0.5px solid #5DCAA5;font-size:10px;color:#0F6E56;cursor:pointer">공유</button>
+              </div>
+            </div>
+          </div>
+          <div class="report-card" style="display:flex;align-items:flex-start;gap:8px">
+            <div class="report-icon"><svg width="14" height="16" viewBox="0 0 14 16" fill="none"><path d="M9 1H3a1.5 1.5 0 0 0-1.5 1.5v11A1.5 1.5 0 0 0 3 15h8a1.5 1.5 0 0 0 1.5-1.5V5.5L9 1z" stroke="#185FA5" stroke-width="1.2"/><path d="M9 1v4.5H12.5M4.5 9h5M4.5 12h3" stroke="#185FA5" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+            <div style="flex:1">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px"><div style="font-size:11px;font-weight:500;color:var(--color-text-primary)">종로 노후건물 진단</div><span class="badge badge-amber">C등급</span></div>
+              <div style="font-size:10px;color:var(--color-text-secondary);margin-bottom:4px">2026.03.18 생성 · PDF+DOCX</div>
+              <div style="display:flex;gap:4px">
+                <button style="flex:1;height:24px;border-radius:5px;background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);font-size:10px;color:var(--color-text-primary);cursor:pointer">미리보기</button>
+                <button style="flex:1;height:24px;border-radius:5px;background:#E1F5EE;border:0.5px solid #5DCAA5;font-size:10px;color:#0F6E56;cursor:pointer">공유</button>
+              </div>
+            </div>
+          </div>
+          <div class="report-card" style="display:flex;align-items:flex-start;gap:8px;opacity:.6">
+            <div class="report-icon" style="background:#FAEEDA;border-color:#FAC775"><svg width="14" height="16" viewBox="0 0 14 16" fill="none"><path d="M9 1H3a1.5 1.5 0 0 0-1.5 1.5v11A1.5 1.5 0 0 0 3 15h8a1.5 1.5 0 0 0 1.5-1.5V5.5L9 1z" stroke="#854F0B" stroke-width="1.2"/><path d="M9 1v4.5H12.5" stroke="#854F0B" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+            <div style="flex:1">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px"><div style="font-size:11px;font-weight:500;color:var(--color-text-primary)">마포 빌라 단지</div><span class="badge badge-amber">생성 중</span></div>
+              <div style="font-size:10px;color:var(--color-text-secondary)">처리 중 · 잠시 후 완료 예정</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCR-17 보고서 미리보기 -->
+    <div class="screen-wrap">
+      <div class="screen-label">SCR-17</div>
+      <div class="screen-id">보고서 미리보기</div>
+      <div class="phone">
+        <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons"><div class="sig"><span style="height:3px;width:2px"></span><span style="height:5px;width:2px"></span><span style="height:7px;width:2px"></span><span style="height:9px;width:2px"></span></div><div class="bat"><div class="bat-fill"></div></div></div></div>
+        <div class="topbar">
+          <div class="back-btn"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M6.5 2L3.5 5L6.5 8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+          <div class="topbar-title" style="font-size:12px">보고서 미리보기</div>
+          <div style="display:flex;gap:4px">
+            <div style="width:24px;height:24px;border-radius:6px;background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 1v6M2 7l3.5 3L9 7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div style="width:24px;height:24px;border-radius:6px;background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5h7M5.5 2l3.5 3.5L5.5 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+        </div>
+        <div style="background:var(--color-background-secondary);flex:1;padding:10px 12px;display:flex;flex-direction:column;gap:6px;overflow:hidden">
+          <div style="font-size:10px;color:var(--color-text-secondary);text-align:center">1 / 8 페이지</div>
+          <div class="doc-page">
+            <div style="text-align:center;margin-bottom:4px">
+              <div style="font-size:8px;color:#5F5E5A;font-weight:500">건축물 안전점검 보고서</div>
+              <div style="font-size:7px;color:#888780">국토안전관리원 표준 양식</div>
+            </div>
+            <div class="doc-line title"></div>
+            <div style="display:flex;gap:4px">
+              <div style="flex:1;display:flex;flex-direction:column;gap:2px">
+                <div class="doc-line" style="width:90%"></div>
+                <div class="doc-line" style="width:70%"></div>
+                <div class="doc-line" style="width:80%"></div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 6px;background:#FCEBEB;border-radius:4px;border:0.5px solid #F09595">
+                <div style="font-size:8px;color:#A32D2D;font-weight:500">D등급</div>
+                <div style="font-size:7px;color:#A32D2D">긴급 보수</div>
+              </div>
+            </div>
+            <div class="doc-img"></div>
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <div class="doc-line" style="width:100%"></div>
+              <div class="doc-line" style="width:85%"></div>
+              <div class="doc-line" style="width:90%"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button style="flex:1;height:32px;border-radius:7px;background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);font-size:11px;color:var(--color-text-primary);cursor:pointer">다운로드</button>
+            <button style="flex:1;height:32px;border-radius:7px;background:#1D9E75;border:none;font-size:11px;color:#fff;cursor:pointer">공유</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 화면 흐름 -->
+  <div class="section-label" style="margin-top:28px">화면 흐름</div>
+  <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:12px 16px;background:var(--color-background-secondary);border-radius:10px;border:0.5px solid var(--color-border-tertiary)">
+    <span style="font-size:12px;padding:4px 10px;background:var(--color-background-primary);border-radius:6px;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary)">SCR-12 프로젝트 상세</span>
+    <span style="font-size:14px;color:var(--color-text-secondary)">→</span>
+    <span style="font-size:12px;padding:4px 10px;background:var(--color-background-primary);border-radius:6px;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary)">SCR-14 생성 설정</span>
+    <span style="font-size:14px;color:var(--color-text-secondary)">→</span>
+    <span style="font-size:12px;padding:4px 10px;background:var(--color-background-primary);border-radius:6px;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary)">SCR-15 생성 중</span>
+    <span style="font-size:14px;color:var(--color-text-secondary)">→ FCM 알림 →</span>
+    <span style="font-size:12px;padding:4px 10px;background:var(--color-background-primary);border-radius:6px;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary)">SCR-16 목록</span>
+    <span style="font-size:14px;color:var(--color-text-secondary)">→</span>
+    <span style="font-size:12px;padding:4px 10px;background:var(--color-background-primary);border-radius:6px;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary)">SCR-17 미리보기</span>
+    <span style="font-size:14px;color:var(--color-text-secondary)">→ 다운로드 / 공유</span>
+  </div>
+
+  <!-- 스펙 -->
+  <div class="section-label" style="margin-top:24px">화면별 스펙</div>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div class="spec-block">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:11px;font-weight:500;color:var(--color-text-secondary)">SCR-14</span><span class="spec-block-title">보고서 생성 설정</span><span class="badge badge-teal">핵심</span></div>
+      <table class="spec-table">
+        <tr class="spec-row"><td>출력 형식</td><td>PDF(배포용) / DOCX(편집용) / 둘 다</td></tr>
+        <tr class="spec-row"><td>양식 선택</td><td>국토안전관리원 표준 / 간이 요약 보고서</td></tr>
+        <tr class="spec-row"><td>요청 방식</td><td>비동기 — 202 Accepted 즉시 반환</td></tr>
+        <tr class="spec-row"><td>완료 알림</td><td>FCM 푸시 알림, 앱 내 배지 업데이트</td></tr>
+      </table>
+    </div>
+    <div class="spec-block">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:11px;font-weight:500;color:var(--color-text-secondary)">SCR-16</span><span class="spec-block-title">보고서 목록</span></div>
+      <table class="spec-table">
+        <tr class="spec-row"><td>상태 구분</td><td>완료 / 생성 중(반투명+스피너) / 실패</td></tr>
+        <tr class="spec-row"><td>정렬</td><td>최신 생성순 기본, 건물명/날짜 정렬 지원</td></tr>
+        <tr class="spec-row"><td>액션</td><td>미리보기 → SCR-17 / 공유(이메일·링크·메신저)</td></tr>
+      </table>
+    </div>
+    <div class="spec-block">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:11px;font-weight:500;color:var(--color-text-secondary)">SCR-17</span><span class="spec-block-title">보고서 미리보기</span></div>
+      <table class="spec-table">
+        <tr class="spec-row"><td>뷰어</td><td>인앱 PDF 렌더러, 페이지 스와이프 이동</td></tr>
+        <tr class="spec-row"><td>다운로드</td><td>기기 로컬 저장 (저장소 권한 필요)</td></tr>
+        <tr class="spec-row"><td>공유</td><td>S3 Pre-signed URL → 시스템 공유 시트</td></tr>
+        <tr class="spec-row"><td>URL 유효기간</td><td>7일 후 만료, 재생성 가능</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>

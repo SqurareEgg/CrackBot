@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CrackBot AI — 화면 설계서: 점검 프로젝트 관리</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f5f4f0;
+  --color-text-primary: #1a1a18;
+  --color-text-secondary: #5f5e5a;
+  --color-border-tertiary: rgba(0,0,0,0.10);
+  --color-border-secondary: rgba(0,0,0,0.18);
+  --color-border-primary: rgba(0,0,0,0.30);
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background-primary: #1e1e1c;
+    --color-background-secondary: #2a2a27;
+    --color-text-primary: #e8e6df;
+    --color-text-secondary: #9c9a92;
+    --color-border-tertiary: rgba(255,255,255,0.10);
+    --color-border-secondary: rgba(255,255,255,0.18);
+    --color-border-primary: rgba(255,255,255,0.30);
+  }
+}
+body { font-family: var(--font-sans); background: var(--color-background-primary); color: var(--color-text-primary); padding: 24px; max-width: 1000px; margin: 0 auto; }
+.wrap { padding: 20px 0 32px; }
+.doc-title { font-size: 17px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; }
+.doc-sub { font-size: 12px; color: var(--color-text-secondary); display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 20px; }
+.screens-row { display: flex; gap: 16px; flex-wrap: wrap; }
+.screen-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; min-width: 180px; max-width: 220px; }
+.screen-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); letter-spacing: .04em; text-transform: uppercase; }
+.screen-id { font-size: 10px; color: var(--color-text-secondary); }
+.phone { width: 200px; border-radius: 28px; border: 2px solid var(--color-border-secondary); background: var(--color-background-primary); overflow: hidden; display: flex; flex-direction: column; }
+.status-bar { height: 28px; background: var(--color-background-secondary); display: flex; align-items: center; justify-content: space-between; padding: 0 14px; flex-shrink: 0; }
+.status-time { font-size: 11px; font-weight: 500; color: var(--color-text-primary); }
+.status-icons { display: flex; gap: 4px; align-items: center; }
+.sig { width: 14px; height: 10px; display: flex; align-items: flex-end; gap: 1px; }
+.sig span { background: var(--color-text-primary); border-radius: 1px; }
+.bat { width: 18px; height: 10px; border: 1.5px solid var(--color-text-primary); border-radius: 2px; display: flex; align-items: center; padding: 1px; position: relative; }
+.bat::after { content: ''; position: absolute; right: -4px; top: 50%; transform: translateY(-50%); width: 2px; height: 5px; background: var(--color-text-primary); border-radius: 1px; }
+.bat-fill { height: 100%; background: var(--color-text-primary); border-radius: 1px; width: 70%; }
+.topbar { padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.topbar-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+.back-btn { width: 24px; height: 24px; border-radius: 6px; background: var(--color-background-secondary); display: flex; align-items: center; justify-content: center; }
+.content-area { flex: 1; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
+.badge { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 20px; font-weight: 500; }
+.badge-teal { background: #E1F5EE; color: #0F6E56; }
+.badge-amber { background: #FAEEDA; color: #854F0B; }
+.badge-red { background: #FCEBEB; color: #A32D2D; }
+.badge-blue { background: #E6F1FB; color: #185FA5; }
+.badge-gray { background: var(--color-background-secondary); color: var(--color-text-secondary); border: 0.5px solid var(--color-border-tertiary); }
+.project-card { background: var(--color-background-secondary); border-radius: 9px; border: 0.5px solid var(--color-border-tertiary); padding: 9px 10px; }
+.project-card.active { border-color: #1D9E75; background: var(--color-background-primary); }
+.proj-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 5px; }
+.proj-name { font-size: 12px; font-weight: 500; color: var(--color-text-primary); line-height: 1.3; }
+.proj-meta { font-size: 10px; color: var(--color-text-secondary); margin-bottom: 5px; }
+.prog-row { display: flex; align-items: center; gap: 5px; }
+.prog-bar { flex: 1; height: 3px; background: var(--color-border-tertiary); border-radius: 2px; overflow: hidden; }
+.prog-fill { height: 100%; border-radius: 2px; background: #1D9E75; }
+.prog-val { font-size: 10px; color: var(--color-text-secondary); min-width: 24px; text-align: right; }
+.metric-row { display: flex; gap: 6px; }
+.metric-card { flex: 1; padding: 7px 8px; background: var(--color-background-secondary); border-radius: 7px; border: 0.5px solid var(--color-border-tertiary); }
+.metric-label { font-size: 9px; color: var(--color-text-secondary); margin-bottom: 2px; }
+.metric-val { font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
+.bottom-tab { display: flex; border-top: 0.5px solid var(--color-border-tertiary); background: var(--color-background-primary); }
+.tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px 0; gap: 2px; }
+.tab-label { font-size: 9px; color: var(--color-text-secondary); }
+.tab-label.active { color: #1D9E75; }
+.search-bar { display: flex; align-items: center; gap: 6px; padding: 5px 9px; background: var(--color-background-secondary); border-radius: 8px; border: 0.5px solid var(--color-border-tertiary); }
+.filter-chip { padding: 3px 8px; border-radius: 20px; font-size: 10px; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); color: var(--color-text-secondary); white-space: nowrap; }
+.filter-chip.on { background: #E1F5EE; border-color: #5DCAA5; color: #0F6E56; }
+.form-field { display: flex; flex-direction: column; gap: 3px; }
+.field-label { font-size: 10px; color: var(--color-text-secondary); font-weight: 500; }
+.field-input { height: 30px; border-radius: 7px; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); padding: 0 9px; font-size: 11px; color: var(--color-text-primary); }
+.field-input.focus { border-color: #1D9E75; }
+.defect-tag { display: flex; align-items: center; gap: 4px; padding: 4px 7px; background: var(--color-background-primary); border-radius: 6px; border: 0.5px solid var(--color-border-tertiary); }
+.section-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); letter-spacing: .05em; text-transform: uppercase; margin: 24px 0 10px; }
+.spec-block { margin-bottom: 8px; padding: 14px 16px; background: var(--color-background-secondary); border-radius: 10px; border: 0.5px solid var(--color-border-tertiary); }
+.spec-block-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 8px; }
+.spec-table { width: 100%; border-collapse: collapse; }
+.spec-row { border-bottom: 0.5px solid var(--color-border-tertiary); }
+.spec-row td { padding: 5px 0; font-size: 11px; vertical-align: top; }
+.spec-row td:first-child { color: var(--color-text-secondary); width: 100px; font-size: 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="doc-title">CrackBot AI — 화면 설계서</div>
+  <div class="doc-sub">
+    <span>화면 그룹 3: 점검 프로젝트 관리</span>
+    <span>버전 v0.1</span>
+    <span>2026. 3. 25.</span>
+    <span>SCR-10 ~ SCR-13</span>
+  </div>
+
+  <div class="section-label">화면 목록</div>
+  <div class="screens-row">
+
+    <!-- SCR-10 홈 대시보드 -->
+    <div class="screen-wrap">
+      <div class="screen-label">SCR-10</div>
+      <div class="screen-id">홈 대시보드</div>
+      <div class="phone">
+        <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons"><div class="sig"><span style="height:3px;width:2px"></span><span style="height:5px;width:2px"></span><span style="height:7px;width:2px"></span><span style="height:9px;width:2px"></span></div><div class="bat"><div class="bat-fill"></div></div></div></div>
+        <div class="topbar">
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="width:24px;height:24px;border-radius:50%;background:#E1F5EE;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;color:#0F6E56">KM</div>
+            <div><div style="font-size:11px;font-weight:500;color:var(--color-text-primary)">김민준 점검사</div><div style="font-size:9px;color:var(--color-text-secondary)">오늘 2개 진행 중</div></div>
+          </div>
+          <div style="width:24px;height:24px;border-radius:6px;background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1a3 3 0 0 1 3 3v2l1 2H2L3 6V4a3 3 0 0 1 3-3z" stroke="currentColor" stroke-width="1.2"/><path d="M4.5 9a1.5 1.5 0 0 0 3 0" stroke="currentColor" stroke-width="1.2"/></svg></div>
+        </div>
+        <div class="content-area">
+          <div class="metric-row">
+            <div class="metric-card"><div class="metric-label">이번 달 점검</div><div><span class="metric-val">12</span><span style="font-size:9px;color:var(--color-text-secondary)"> 건</span></div></div>
+            <div class="metric-card"><div class="metric-label">탐지된 결함</div><div><span class="metric-val">48</span><span style="font-size:9px;color:var(--color-text-secondary)"> 개</span></div></div>
+            <div class="metric-card"><div class="metric-label">D/E등급</div><div><span class="metric-val" style="color:#A32D2D">3</span><span style="font-size:9px;color:var(--color-text-secondary)"> 건</span></div></div>
+          </div>
+          <div style="font-size:11px;font-weight:500;color:var(--color-text-primary)">진행 중인 프로젝트</div>
+          <div class="project-card active">
+            <div class="proj-header"><div class="proj-name">서울 강남구 논현동 상가<br>외벽 점검</div><span class="badge badge-amber">진행중</span></div>
+            <div class="proj-meta">2026.03.20 ~ 03.28 · A~C구역</div>
+            <div class="prog-row"><div class="prog-bar"><div class="prog-fill" style="width:68%"></div></div><div class="prog-val">68%</div></div>
+          </div>
+          <div class="project-card">
+            <div class="proj-header"><div class="proj-name">마포구 빌라 단지<br>정기 점검</div><span class="badge badge-blue">예정</span></div>
+            <div class="proj-meta">2026.03.30 ~ 04.05</div>
+            <div class="prog-row"><div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div><div class="prog-val">0%</div></div>
+          </div>
+        </div>
+        <div class="bottom-tab">
+          <div class="tab-item"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" stroke="#1D9E75" stroke-width="1.2"/><rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2" opacity=".4"/><rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2" opacity=".4"/><rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2" opacity=".4"/></svg><div class="tab-label active">홈</div></div>
+          <div class="tab-item"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.2" opacity=".4"/></svg><div class="tab-label">점검</div></div>
+          <div class="tab-item" style="position:relative;top:-8px"><div style="width:36px;height:36px;border-radius:50%;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div></div>
+          <div class="tab-item"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 8h7M3 12h9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".4"/></svg><div class="tab-label">보고서</div></div>
+          <div class="tab-item"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.5" r="2.5" stroke="currentColor" stroke-width="1.2" opacity=".4"/><path d="M2 13c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".4"/></svg><div class="tab-label">내 정보</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCR-11 프로젝트 목록 -->
+    <div class="screen-wrap">
+      <div class="screen-label">SCR-11</div>
+      <div class="screen-id">프로젝트 목록</div>
+      <div class="phone">
+        <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons"><div class="sig"><span style="height:3px;width:2px"></span><span style="height:5px;width:2px"></span><span style="height:7px;width:2px"></span><span style="height:9px;width:2px"></span></div><div class="bat"><div class="bat-fill"></div></div></div></div>
+        <div class="topbar">
+          <div class="topbar-title">점검 프로젝트</div>
+          <div style="width:24px;height:24px;border-radius:6px;background:#1D9E75;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v8M2 6h8" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        </div>
+        <div class="content-area" style="gap:6px">
+          <div class="search-bar"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="5" cy="5" r="3.5" stroke="currentColor" stroke-width="1.2" opacity=".5"/><path d="M8 8l2.5 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".5"/></svg><div style="flex:1;font-size:11px;color:var(--color-text-secondary)">건물명 또는 주소 검색</div></div>
+          <div style="display:flex;gap:4px;overflow:hidden">
+            <div class="filter-chip on">전체</div>
+            <div class="filter-chip">진행중</div>
+            <div class="filter-chip">완료</div>
+            <div class="filter-chip">예정</div>
+          </div>
+          <div class="project-card" style="padding:8px 9px">
+            <div class="proj-header"><div class="proj-name">논현동 상가 외벽 점검</div><span class="badge badge-amber">진행중</span></div>
+            <div class="proj-meta">강남구 논현동 123-4 · 6층</div>
+            <div class="prog-row"><div class="prog-bar"><div class="prog-fill" style="width:68%"></div></div><div class="prog-val">68%</div></div>
+            <div style="display:flex;gap:4px;margin-top:5px">
+              <div class="defect-tag"><div style="width:6px;height:6px;border-radius:50%;background:#E24B4A"></div><span style="font-size:10px;color:var(--color-text-secondary)">균열 7</span></div>
+              <div class="defect-tag"><div style="width:6px;height:6px;border-radius:50%;background:#EF9F27"></div><span style="font-size:10px;color:var(--color-text-secondary)">박락 3</span></div>
+            </div>
+          </div>
+          <div class="project-card" style="padding:8px 9px">
+            <div class="proj-header"><div class="proj-name">마포 빌라 단지 정기점검</div><span class="badge badge-blue">예정</span></div>
+            <div class="proj-meta">마포구 성산동 55 · 5개동</div>
+            <div class="prog-row"><div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div><div class="prog-val">0%</div></div>
+          </div>
+          <div class="project-card" style="padding:8px 9px">
+            <div class="proj-header"><div class="proj-name">종로 노후건물 안전진단</div><span class="badge badge-teal">완료</span></div>
+            <div class="proj-meta">종로구 견지동 9 · 4층</div>
+            <div class="prog-row"><div class="prog-bar"><div class="prog-fill" style="width:100%"></div></div><div class="prog-val">100%</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCR-12 프로젝트 상세 -->
+    <div class="screen-wrap">
+      <div class="screen-label">SCR-12</div>
+      <div class="screen-id">프로젝트 상세</div>
+      <div class="phone">
+        <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons"><div class="sig"><span style="height:3px;width:2px"></span><span style="height:5px;width:2px"></span><span style="height:7px;width:2px"></span><span style="height:9px;width:2px"></span></div><div class="bat"><div class="bat-fill"></div></div></div></div>
+        <div class="topbar">
+          <div class="back-btn"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M6.5 2L3.5 5L6.5 8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+          <div class="topbar-title" style="font-size:12px">논현동 상가 외벽 점검</div>
+          <span class="badge badge-amber">진행중</span>
+        </div>
+        <div class="content-area" style="gap:7px">
+          <div class="metric-row">
+            <div class="metric-card"><div class="metric-label">사진</div><div><span class="metric-val">34</span><span style="font-size:9px;color:var(--color-text-secondary)">장</span></div></div>
+            <div class="metric-card"><div class="metric-label">결함</div><div><span class="metric-val">10</span><span style="font-size:9px;color:var(--color-text-secondary)">개</span></div></div>
+            <div class="metric-card"><div class="metric-label">등급</div><div><span class="metric-val" style="color:#A32D2D">D</span></div></div>
+          </div>
+          <div style="font-size:11px;font-weight:500;color:var(--color-text-primary)">구역별 현황</div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;background:var(--color-background-secondary);border-radius:7px;border:0.5px solid var(--color-border-tertiary)">
+              <div style="font-size:11px;color:var(--color-text-primary)">A구역 · 1층 외벽</div>
+              <div style="display:flex;align-items:center;gap:5px"><span class="badge badge-red" style="font-size:9px">D등급</span><span style="font-size:10px;color:var(--color-text-secondary)">12장</span></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;background:var(--color-background-secondary);border-radius:7px;border:0.5px solid var(--color-border-tertiary)">
+              <div style="font-size:11px;color:var(--color-text-primary)">B구역 · 2층 외벽</div>
+              <div style="display:flex;align-items:center;gap:5px"><span class="badge badge-amber" style="font-size:9px">C등급</span><span style="font-size:10px;color:var(--color-text-secondary)">14장</span></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;background:var(--color-background-secondary);border-radius:7px;border:0.5px solid var(--color-border-tertiary);opacity:.5">
+              <div style="font-size:11px;color:var(--color-text-primary)">C구역 · 3층 외벽</div>
+              <div style="display:flex;align-items:center;gap:5px"><span class="badge badge-gray" style="font-size:9px">미점검</span><span style="font-size:10px;color:var(--color-text-secondary)">0장</span></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;margin-top:2px">
+            <button style="flex:1;height:32px;border-radius:7px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);font-size:11px;color:var(--color-text-primary);cursor:pointer">촬영 계속</button>
+            <button style="flex:1;height:32px;border-radius:7px;background:#1D9E75;border:none;font-size:11px;color:#fff;cursor:pointer">보고서 생성</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCR-13 프로젝트 생성 -->
+    <div class="screen-wrap">
+      <div class="screen-label">SCR-13</div>
+      <div class="screen-id">프로젝트 생성</div>
+      <div class="phone">
+        <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons"><div class="sig"><span style="height:3px;width:2px"></span><span style="height:5px;width:2px"></span><span style="height:7px;width:2px"></span><span style="height:9px;width:2px"></span></div><div class="bat"><div class="bat-fill"></div></div></div></div>
+        <div class="topbar">
+          <div class="back-btn"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M6.5 2L3.5 5L6.5 8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+          <div class="topbar-title">새 점검 프로젝트</div>
+          <div></div>
+        </div>
+        <div class="content-area" style="gap:7px">
+          <div class="form-field"><div class="field-label">건물명 *</div><div class="field-input focus">강남 논현동 상가건물</div></div>
+          <div class="form-field"><div class="field-label">주소 *</div><div class="field-input">서울 강남구 논현동 123-4</div></div>
+          <div style="display:flex;gap:6px">
+            <div class="form-field" style="flex:1"><div class="field-label">시작일 *</div><div class="field-input">2026.03.20</div></div>
+            <div class="form-field" style="flex:1"><div class="field-label">종료 예정일</div><div class="field-input">2026.03.28</div></div>
+          </div>
+          <div class="form-field">
+            <div class="field-label">점검 구역 설정</div>
+            <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">
+              <div style="padding:3px 8px;border-radius:6px;background:#E1F5EE;border:0.5px solid #5DCAA5;font-size:10px;color:#0F6E56">A구역</div>
+              <div style="padding:3px 8px;border-radius:6px;background:#E1F5EE;border:0.5px solid #5DCAA5;font-size:10px;color:#0F6E56">B구역</div>
+              <div style="padding:3px 8px;border-radius:6px;background:var(--color-background-secondary);border:0.5px dashed var(--color-border-secondary);font-size:10px;color:var(--color-text-secondary)">+ 추가</div>
+            </div>
+          </div>
+          <div class="form-field"><div class="field-label">담당 점검사</div><div class="field-input">김민준</div></div>
+          <button style="width:100%;height:34px;border-radius:8px;background:#1D9E75;border:none;color:#fff;font-size:13px;font-weight:500;cursor:pointer;margin-top:4px">프로젝트 생성</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 화면 흐름 -->
+  <div class="section-label" style="margin-top:28px">화면 흐름</div>
+  <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:12px 16px;background:var(--color-background-secondary);border-radius:10px;border:0.5px solid var(--color-border-tertiary)">
+    <span style="font-size:12px;padding:4px 10px;background:var(--color-background-primary);border-radius:6px;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary)">SCR-10 홈</span>
+    <span style="font-size:14px;color:var(--color-text-secondary)">→</span>
+    <span style="font-size:12px;padding:4px 10px;background:var(--color-background-primary);border-radius:6px;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary)">SCR-11 목록</span>
+    <span style="font-size:14px;color:var(--color-text-secondary)">→ 카드 탭 →</span>
+    <span style="font-size:12px;padding:4px 10px;background:var(--color-background-primary);border-radius:6px;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary)">SCR-12 상세</span>
+    <span style="font-size:14px;color:var(--color-text-secondary)">→ 촬영 계속 → SCR-06</span>
+    <span style="font-size:14px;color:var(--color-text-secondary)"> | SCR-11 "+" →</span>
+    <span style="font-size:12px;padding:4px 10px;background:var(--color-background-primary);border-radius:6px;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary)">SCR-13 생성</span>
+  </div>
+
+  <!-- 스펙 -->
+  <div class="section-label" style="margin-top:24px">화면별 스펙</div>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div class="spec-block">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:11px;font-weight:500;color:var(--color-text-secondary)">SCR-10</span><span class="spec-block-title">홈 대시보드</span></div>
+      <table class="spec-table">
+        <tr class="spec-row"><td>메트릭 카드</td><td>이번 달 점검 건수, 결함 수, D/E등급 건수</td></tr>
+        <tr class="spec-row"><td>프로젝트 목록</td><td>진행 중 2개 우선, 탭하면 SCR-12</td></tr>
+        <tr class="spec-row"><td>하단 탭바</td><td>홈 / 점검 / 촬영(FAB) / 보고서 / 내 정보</td></tr>
+      </table>
+    </div>
+    <div class="spec-block">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:11px;font-weight:500;color:var(--color-text-secondary)">SCR-12</span><span class="spec-block-title">프로젝트 상세</span></div>
+      <table class="spec-table">
+        <tr class="spec-row"><td>상단 메트릭</td><td>사진 수, 결함 수, 종합 안전등급</td></tr>
+        <tr class="spec-row"><td>구역 목록</td><td>구역명, 등급 배지, 사진 수, 미점검(반투명)</td></tr>
+        <tr class="spec-row"><td>주요 액션</td><td>촬영 계속 → SCR-06 / 보고서 생성 → SCR-14</td></tr>
+      </table>
+    </div>
+    <div class="spec-block">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:11px;font-weight:500;color:var(--color-text-secondary)">SCR-13</span><span class="spec-block-title">프로젝트 생성</span></div>
+      <table class="spec-table">
+        <tr class="spec-row"><td>필수 입력</td><td>건물명, 주소, 시작일</td></tr>
+        <tr class="spec-row"><td>선택 입력</td><td>종료 예정일, 구역 설정(최대 10개), 담당자</td></tr>
+        <tr class="spec-row"><td>완료 후</td><td>SCR-12 프로젝트 상세로 이동</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>
