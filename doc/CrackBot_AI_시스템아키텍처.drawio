@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-03-25T00:00:00.000Z" agent="CrackBot AI" version="21.0.0" type="device">
+  <diagram id="crackbot-arch" name="CrackBot AI 시스템 아키텍처">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ================================================ -->
+        <!-- TITLE -->
+        <!-- ================================================ -->
+        <mxCell id="title" value="CrackBot AI — 시스템 아키텍처 설계서" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1;fontColor=#1D9E75;" vertex="1" parent="1">
+          <mxGeometry x="327" y="30" width="1000" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="v0.1 · 2026.03.25 · SW 전체 (모바일 · 백엔드 · AI 엔진)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="327" y="68" width="1000" height="24" as="geometry" />
+        </mxCell>
+
+        <!-- ================================================ -->
+        <!-- LAYER 1: MOBILE CLIENT -->
+        <!-- ================================================ -->
+        <mxCell id="layer-mobile-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5EE;strokeColor=#1D9E75;strokeWidth=2;opacity=30;verticalAlign=top;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="110" width="1574" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="layer-mobile-label" value="📱  모바일 클라이언트 레이어  (React Native · iOS / Android)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;fontColor=#0F6E56;" vertex="1" parent="1">
+          <mxGeometry x="56" y="116" width="600" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="m1" value="&lt;b&gt;카메라 모듈&lt;/b&gt;&lt;br&gt;React Native Camera&lt;br&gt;&lt;font color='#888'&gt;EXIF · GPS 태깅&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1D9E75;strokeWidth=1.5;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="60" y="148" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="m2" value="&lt;b&gt;GPS 위치 관리&lt;/b&gt;&lt;br&gt;Expo Location&lt;br&gt;&lt;font color='#888'&gt;좌표→구역 자동 매핑&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1D9E75;strokeWidth=1.5;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="290" y="148" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="m3" value="&lt;b&gt;사진 분류 / 관리&lt;/b&gt;&lt;br&gt;AsyncStorage&lt;br&gt;&lt;font color='#888'&gt;오프라인 큐 · S3 Upload&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1D9E75;strokeWidth=1.5;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="520" y="148" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="m4" value="&lt;b&gt;보고서 뷰어&lt;/b&gt;&lt;br&gt;PDF Preview&lt;br&gt;&lt;font color='#888'&gt;FCM Push · 파일 공유&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1D9E75;strokeWidth=1.5;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="750" y="148" width="200" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- ================================================ -->
+        <!-- ARROW: Mobile → API -->
+        <!-- ================================================ -->
+        <mxCell id="arrow-m-api" value="HTTPS / REST API" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#1D9E75;strokeWidth=2;fontColor=#1D9E75;fontSize=11;fontStyle=1;endArrow=block;endFill=1;" edge="1" parent="1" source="m3" target="api1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ================================================ -->
+        <!-- LAYER 2: API SERVER -->
+        <!-- ================================================ -->
+        <mxCell id="layer-api-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F1FB;strokeColor=#185FA5;strokeWidth=2;opacity=30;verticalAlign=top;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="330" width="1574" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="layer-api-label" value="🖥  API 서버 레이어  (FastAPI · Python 3.11 · Uvicorn)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;fontColor=#185FA5;" vertex="1" parent="1">
+          <mxGeometry x="56" y="336" width="600" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="api1" value="&lt;b&gt;API 게이트웨이&lt;/b&gt;&lt;br&gt;FastAPI + Uvicorn&lt;br&gt;&lt;font color='#888'&gt;CORS · Rate Limiting · 로깅&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#185FA5;strokeWidth=1.5;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="60" y="368" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="api2" value="&lt;b&gt;인증 / 인가&lt;/b&gt;&lt;br&gt;JWT + OAuth2&lt;br&gt;&lt;font color='#888'&gt;Access(15m) · Refresh(7d)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#185FA5;strokeWidth=1.5;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="310" y="368" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="api3" value="&lt;b&gt;점검 관리 서비스&lt;/b&gt;&lt;br&gt;SQLAlchemy ORM&lt;br&gt;&lt;font color='#888'&gt;건축물 · 프로젝트 CRUD&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#185FA5;strokeWidth=1.5;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="560" y="368" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="api4" value="&lt;b&gt;보고서 생성 서비스&lt;/b&gt;&lt;br&gt;Celery (비동기)&lt;br&gt;&lt;font color='#888'&gt;python-docx · ReportLab&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#185FA5;strokeWidth=1.5;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="810" y="368" width="220" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- ================================================ -->
+        <!-- ARROW: API → AI -->
+        <!-- ================================================ -->
+        <mxCell id="arrow-api-ai" value="Celery Task Queue (Redis)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#7F77DD;strokeWidth=2;fontColor=#534AB7;fontSize=11;fontStyle=1;endArrow=block;endFill=1;dashed=1;" edge="1" parent="1" source="api3" target="ai1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-api-report" value="Celery Task Queue (Redis)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#7F77DD;strokeWidth=2;fontColor=#534AB7;fontSize=11;fontStyle=1;endArrow=block;endFill=1;dashed=1;" edge="1" parent="1" source="api4" target="rw1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ================================================ -->
+        <!-- LAYER 3-A: AI ENGINE -->
+        <!-- ================================================ -->
+        <mxCell id="layer-ai-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#534AB7;strokeWidth=2;opacity=30;verticalAlign=top;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="550" width="860" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="layer-ai-label" value="🤖  AI 엔진 레이어  (YOLOv8 · OpenCV · GPU Worker)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;fontColor=#534AB7;" vertex="1" parent="1">
+          <mxGeometry x="56" y="556" width="600" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ai1" value="&lt;b&gt;결함 탐지 모델&lt;/b&gt;&lt;br&gt;YOLOv8 + Faster R-CNN&lt;br&gt;&lt;font color='#888'&gt;6대 결함 · mAP ≥ 0.9&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#534AB7;strokeWidth=1.5;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="60" y="588" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="ai2" value="&lt;b&gt;균열 폭 측정&lt;/b&gt;&lt;br&gt;OpenCV + PIL&lt;br&gt;&lt;font color='#888'&gt;Canny → 골격화 → 0.1mm&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#534AB7;strokeWidth=1.5;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="310" y="588" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="ai3" value="&lt;b&gt;등급 판정 엔진&lt;/b&gt;&lt;br&gt;규칙 기반 + ML 앙상블&lt;br&gt;&lt;font color='#888'&gt;A~E 등급 · 국토안전관리원&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#534AB7;strokeWidth=1.5;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="560" y="588" width="220" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- ================================================ -->
+        <!-- LAYER 3-B: REPORT WORKER -->
+        <!-- ================================================ -->
+        <mxCell id="layer-rw-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAEEDA;strokeColor=#BA7517;strokeWidth=2;opacity=30;verticalAlign=top;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="930" y="550" width="684" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="layer-rw-label" value="📄  보고서 워커 레이어  (Celery · CPU Worker)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;fontColor=#854F0B;" vertex="1" parent="1">
+          <mxGeometry x="946" y="556" width="500" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rw1" value="&lt;b&gt;양식 스키마 매핑&lt;/b&gt;&lt;br&gt;JSON Schema&lt;br&gt;&lt;font color='#888'&gt;국토안전관리원 표준 양식&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#BA7517;strokeWidth=1.5;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="950" y="588" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="rw2" value="&lt;b&gt;PDF / DOCX 생성&lt;/b&gt;&lt;br&gt;ReportLab · python-docx&lt;br&gt;&lt;font color='#888'&gt;이미지 임베드 · S3 업로드&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#BA7517;strokeWidth=1.5;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="588" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="rw3" value="&lt;b&gt;FCM 푸시 발송&lt;/b&gt;&lt;br&gt;Firebase Cloud Messaging&lt;br&gt;&lt;font color='#888'&gt;보고서 완성 알림&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#BA7517;strokeWidth=1.5;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="588" width="220" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- ================================================ -->
+        <!-- ARROW: AI/RW → DATA -->
+        <!-- ================================================ -->
+        <mxCell id="arrow-ai-db" value="결과 저장" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#888780;strokeWidth=2;fontColor=#5F5E5A;fontSize=11;fontStyle=1;endArrow=block;endFill=1;" edge="1" parent="1" source="ai3" target="db1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-rw-s3" value="파일 저장" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#888780;strokeWidth=2;fontColor=#5F5E5A;fontSize=11;fontStyle=1;endArrow=block;endFill=1;" edge="1" parent="1" source="rw2" target="s3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ================================================ -->
+        <!-- LAYER 4: DATA -->
+        <!-- ================================================ -->
+        <mxCell id="layer-data-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAEEDA;strokeColor=#EF9F27;strokeWidth=2;opacity=30;verticalAlign=top;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="770" width="1574" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="layer-data-label" value="🗄  데이터 계층  (PostgreSQL · AWS S3 · Redis)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;fontColor=#854F0B;" vertex="1" parent="1">
+          <mxGeometry x="56" y="776" width="600" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="db1" value="&lt;b&gt;PostgreSQL 15&lt;/b&gt;&lt;br&gt;메인 데이터베이스&lt;br&gt;&lt;font color='#888'&gt;사용자 · 점검 · 결함 · 등급 이력&lt;/font&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#EF9F27;strokeWidth=1.5;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="60" y="800" width="220" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" value="&lt;b&gt;AWS S3&lt;/b&gt;&lt;br&gt;이미지 / 파일 스토리지&lt;br&gt;&lt;font color='#888'&gt;원본 · 오버레이 · PDF/DOCX&lt;/font&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#EF9F27;strokeWidth=1.5;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="400" y="800" width="220" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="redis" value="&lt;b&gt;Redis 7&lt;/b&gt;&lt;br&gt;캐시 / 작업 큐&lt;br&gt;&lt;font color='#888'&gt;Celery Broker · 분산 락&lt;/font&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#EF9F27;strokeWidth=1.5;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="740" y="800" width="220" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- ================================================ -->
+        <!-- LAYER 5: INFRA -->
+        <!-- ================================================ -->
+        <mxCell id="layer-infra-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#888780;strokeWidth=2;opacity=30;verticalAlign=top;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="990" width="1574" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="layer-infra-label" value="☁  인프라 레이어  (Docker · AWS EC2 · GCP AI Platform · GitHub Actions)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;fontColor=#444441;" vertex="1" parent="1">
+          <mxGeometry x="56" y="996" width="800" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="inf1" value="&lt;b&gt;Docker Compose&lt;/b&gt;&lt;br&gt;컨테이너 오케스트레이션&lt;br&gt;&lt;font color='#888'&gt;app · ai-worker · report-worker&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#888780;strokeWidth=1.5;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1028" width="240" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="inf2" value="&lt;b&gt;AWS EC2&lt;/b&gt;&lt;br&gt;API 서버 · Report Worker&lt;br&gt;&lt;font color='#888'&gt;t3.medium (스테이징)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#888780;strokeWidth=1.5;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="330" y="1028" width="240" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="inf3" value="&lt;b&gt;GCP AI Platform&lt;/b&gt;&lt;br&gt;YOLOv8 GPU 추론&lt;br&gt;&lt;font color='#888'&gt;ai-worker 전용 인스턴스&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#888780;strokeWidth=1.5;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="600" y="1028" width="240" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="inf4" value="&lt;b&gt;AWS RDS&lt;/b&gt;&lt;br&gt;PostgreSQL (운영)&lt;br&gt;&lt;font color='#888'&gt;자동 백업 · Multi-AZ&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#888780;strokeWidth=1.5;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="870" y="1028" width="240" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="inf5" value="&lt;b&gt;GitHub Actions&lt;/b&gt;&lt;br&gt;CI/CD 파이프라인&lt;br&gt;&lt;font color='#888'&gt;테스트 → 빌드 → ECR → 배포&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#888780;strokeWidth=1.5;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="1028" width="240" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="inf6" value="&lt;b&gt;CloudFront CDN&lt;/b&gt;&lt;br&gt;S3 파일 배포&lt;br&gt;&lt;font color='#888'&gt;Pre-signed URL · 7일 만료&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#888780;strokeWidth=1.5;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1410" y="1028" width="180" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- ================================================ -->
+        <!-- INTERNAL ARROWS (within layers) -->
+        <!-- ================================================ -->
+        <!-- ai1 → ai2 → ai3 -->
+        <mxCell id="arr-ai12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#534AB7;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="ai1" target="ai2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-ai23" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#534AB7;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="ai2" target="ai3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- rw1 → rw2 → rw3 -->
+        <mxCell id="arr-rw12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#BA7517;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="rw1" target="rw2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-rw23" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#BA7517;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="rw2" target="rw3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- api1 → api2 → api3 → api4 -->
+        <mxCell id="arr-api12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#185FA5;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="api1" target="api2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-api23" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#185FA5;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="api2" target="api3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-api34" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#185FA5;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="api3" target="api4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- api3 → db1 (read/write) -->
+        <mxCell id="arr-api-db" value="SQL" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#888780;strokeWidth=1.5;fontColor=#5F5E5A;fontSize=10;endArrow=block;endFill=1;" edge="1" parent="1" source="api3" target="db1">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="670" y="760"/><mxPoint x="170" y="760"/></Array></mxGeometry>
+        </mxCell>
+        <!-- api3 → redis -->
+        <mxCell id="arr-api-redis" value="Queue" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#7F77DD;strokeWidth=1.5;fontColor=#534AB7;fontSize=10;endArrow=block;endFill=1;dashed=1;" edge="1" parent="1" source="api3" target="redis">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="670" y="760"/><mxPoint x="850" y="760"/></Array></mxGeometry>
+        </mxCell>
+
+        <!-- ================================================ -->
+        <!-- LEGEND -->
+        <!-- ================================================ -->
+        <mxCell id="legend-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#B4B2A9;strokeWidth=1;opacity=60;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="770" width="554" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-title" value="범례 (Legend)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1076" y="782" width="200" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="leg1" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E1F5EE;strokeColor=#1D9E75;strokeWidth=2;opacity=60;" vertex="1" parent="1">
+          <mxGeometry x="1076" y="814" width="24" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="leg1t" value="모바일 클라이언트" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1108" y="810" width="160" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="leg2" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E6F1FB;strokeColor=#185FA5;strokeWidth=2;opacity=60;" vertex="1" parent="1">
+          <mxGeometry x="1076" y="842" width="24" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="leg2t" value="API 서버" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1108" y="838" width="160" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="leg3" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#534AB7;strokeWidth=2;opacity=60;" vertex="1" parent="1">
+          <mxGeometry x="1076" y="870" width="24" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="leg3t" value="AI 엔진" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1108" y="866" width="160" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="leg4" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FAEEDA;strokeColor=#EF9F27;strokeWidth=2;opacity=60;" vertex="1" parent="1">
+          <mxGeometry x="1076" y="898" width="24" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="leg4t" value="데이터 계층" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1108" y="894" width="160" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="leg5" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#888780;strokeWidth=2;opacity=60;" vertex="1" parent="1">
+          <mxGeometry x="1076" y="926" width="24" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="leg5t" value="인프라" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1108" y="922" width="160" height="24" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow legend -->
+        <mxCell id="leg-arr1" value="동기 API 호출" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#1D9E75;strokeWidth=2;endArrow=block;endFill=1;fontSize=11;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="1280" y="822" as="sourcePoint"/><mxPoint x="1380" y="822" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="leg-arr2" value="비동기 큐 (Celery)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#7F77DD;strokeWidth=2;endArrow=block;endFill=1;fontSize=11;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="1280" y="856" as="sourcePoint"/><mxPoint x="1380" y="856" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="leg-arr3" value="데이터 읽기/쓰기" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#888780;strokeWidth=2;endArrow=block;endFill=1;fontSize=11;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="1280" y="890" as="sourcePoint"/><mxPoint x="1380" y="890" as="targetPoint"/></mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
