@@ -345,6 +345,32 @@ def serve_photo_overlay(
         return FileResponse(raw, media_type="image/jpeg")
 
 
+@router.delete("/photos/{photo_id}", status_code=status.HTTP_200_OK)
+def delete_photo(
+    photo_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Delete a photo, its detections, and its stored image files."""
+    photo = db.query(InspectionPhoto).filter(InspectionPhoto.id == photo_id).first()
+    if not photo:
+        raise HTTPException(status_code=404, detail="사진을 찾을 수 없습니다.")
+
+    zone_id = photo.zone_id
+    _local_image_path(photo_id).unlink(missing_ok=True)
+    _local_overlay_path(photo_id).unlink(missing_ok=True)
+
+    db.delete(photo)
+    db.commit()
+
+    zone = db.query(InspectionZone).filter(InspectionZone.id == zone_id).first()
+    if zone:
+        zone.photo_count = len(zone.photos)
+        db.commit()
+
+    return ok({"photo_id": photo_id}, message="사진이 삭제되었습니다.")
+
+
 @router.get("/zones/{zone_id}/photos")
 def list_zone_photos(
     zone_id: str,

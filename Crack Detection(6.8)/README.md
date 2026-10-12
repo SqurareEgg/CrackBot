@@ -36,7 +36,10 @@ pip install fastapi uvicorn ultralytics opencv-python sqlalchemy \
 ```env
 DB_URL=mysql+pymysql://유저명:비밀번호@호스트:3306/DB명
 MODEL_PATH=runs/detect/train12/weights/best.pt
+ROBOFLOW_API_KEY=발급받은_로보플로우_API_키
 ```
+
+`init.py` 실행 전엔 `ROBOFLOW_API_KEY` 환경변수를 셸에서 export(또는 `.env` + `python-dotenv`)해야 합니다.
 
 ---
 

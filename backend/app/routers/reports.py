@@ -156,6 +156,26 @@ def download_report_file(
     )
 
 
+@router.delete("/{report_id}", status_code=status.HTTP_200_OK)
+def delete_report(
+    report_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Delete a report and its generated PDF/DOCX files."""
+    report = db.query(Report).filter(Report.id == report_id).first()
+    if not report:
+        raise HTTPException(status_code=404, detail="보고서를 찾을 수 없습니다.")
+
+    (_REPORTS_DIR / f"{report_id}.pdf").unlink(missing_ok=True)
+    (_REPORTS_DIR / f"{report_id}.docx").unlink(missing_ok=True)
+
+    db.delete(report)
+    db.commit()
+
+    return ok({"report_id": report_id}, message="보고서가 삭제되었습니다.")
+
+
 @router.get("")
 def list_reports(
     project_id: str | None = Query(None),

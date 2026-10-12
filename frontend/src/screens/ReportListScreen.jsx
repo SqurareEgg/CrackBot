@@ -4,7 +4,7 @@ import StatusBar from '../components/StatusBar.jsx';
 import TopBar from '../components/TopBar.jsx';
 import BottomTabBar from '../components/BottomTabBar.jsx';
 import Badge from '../components/Badge.jsx';
-import { listReports, getReportDownloadUrl } from '../api/reports.js';
+import { listReports, getReportDownloadUrl, deleteReport } from '../api/reports.js';
 import { useResponsive } from '../hooks/useResponsive.js';
 
 const STATUS_LABEL = {
@@ -30,7 +30,7 @@ async function downloadReport(reportId, format) {
 }
 
 /* ── Desktop ──────────────────────────────────────────────────── */
-function DesktopReports({ reports, loading, error, navigate }) {
+function DesktopReports({ reports, loading, error, navigate, onDelete }) {
   if (loading) {
     return (
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-secondary)', color: 'var(--text-secondary)', fontSize: 14 }}>
@@ -91,22 +91,30 @@ function DesktopReports({ reports, loading, error, navigate }) {
                             <Badge variant={st.variant}>{st.label}</Badge>
                           </td>
                           <td style={{ padding: '13px 20px', textAlign: 'right' }}>
-                            {isCompleted && (
-                              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-                                <button
-                                  onClick={() => navigate(`/reports/${r.id}/preview`)}
-                                  style={{ padding: '5px 12px', borderRadius: 6, background: 'var(--primary-light)', border: 'none', fontSize: 12, color: 'var(--primary)', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
-                                >
-                                  미리보기
-                                </button>
-                                <button
-                                  onClick={() => downloadReport(r.id, r.format)}
-                                  style={{ padding: '5px 12px', borderRadius: 6, background: 'none', border: '1px solid var(--border-secondary)', fontSize: 12, color: 'var(--text-secondary)', cursor: 'pointer', fontFamily: 'inherit' }}
-                                >
-                                  다운로드
-                                </button>
-                              </div>
-                            )}
+                            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                              {isCompleted && (
+                                <>
+                                  <button
+                                    onClick={() => navigate(`/reports/${r.id}/preview`)}
+                                    style={{ padding: '5px 12px', borderRadius: 6, background: 'var(--primary-light)', border: 'none', fontSize: 12, color: 'var(--primary)', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
+                                  >
+                                    미리보기
+                                  </button>
+                                  <button
+                                    onClick={() => downloadReport(r.id, r.format)}
+                                    style={{ padding: '5px 12px', borderRadius: 6, background: 'none', border: '1px solid var(--border-secondary)', fontSize: 12, color: 'var(--text-secondary)', cursor: 'pointer', fontFamily: 'inherit' }}
+                                  >
+                                    다운로드
+                                  </button>
+                                </>
+                              )}
+                              <button
+                                onClick={() => onDelete(r.id)}
+                                style={{ padding: '5px 12px', borderRadius: 6, background: 'none', border: '1px solid var(--border-danger)', fontSize: 12, color: 'var(--text-danger)', cursor: 'pointer', fontFamily: 'inherit' }}
+                              >
+                                삭제
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       );
@@ -126,7 +134,7 @@ function DesktopReports({ reports, loading, error, navigate }) {
 }
 
 /* ── Mobile ───────────────────────────────────────────────────── */
-function MobileReports({ reports, loading, error, navigate }) {
+function MobileReports({ reports, loading, error, navigate, onDelete }) {
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--bg-primary)', minHeight: 0 }}>
       <StatusBar />
@@ -151,22 +159,30 @@ function MobileReports({ reports, loading, error, navigate }) {
                 </div>
                 <Badge variant={st.variant}>{st.label}</Badge>
               </div>
-              {isCompleted && (
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <button
-                    onClick={() => navigate(`/reports/${r.id}/preview`)}
-                    style={{ flex: 1, padding: '8px', borderRadius: 10, background: 'var(--bg-secondary)', border: '1px solid var(--border-tertiary)', fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', cursor: 'pointer', fontFamily: 'inherit' }}
-                  >
-                    미리보기
-                  </button>
-                  <button
-                    onClick={() => downloadReport(r.id, r.format)}
-                    style={{ flex: 1, padding: '8px', borderRadius: 10, background: 'var(--bg-secondary)', border: '1px solid var(--border-tertiary)', fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', cursor: 'pointer', fontFamily: 'inherit' }}
-                  >
-                    다운로드
-                  </button>
-                </div>
-              )}
+              <div style={{ display: 'flex', gap: 8 }}>
+                {isCompleted && (
+                  <>
+                    <button
+                      onClick={() => navigate(`/reports/${r.id}/preview`)}
+                      style={{ flex: 1, padding: '8px', borderRadius: 10, background: 'var(--bg-secondary)', border: '1px solid var(--border-tertiary)', fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', cursor: 'pointer', fontFamily: 'inherit' }}
+                    >
+                      미리보기
+                    </button>
+                    <button
+                      onClick={() => downloadReport(r.id, r.format)}
+                      style={{ flex: 1, padding: '8px', borderRadius: 10, background: 'var(--bg-secondary)', border: '1px solid var(--border-tertiary)', fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', cursor: 'pointer', fontFamily: 'inherit' }}
+                    >
+                      다운로드
+                    </button>
+                  </>
+                )}
+                <button
+                  onClick={() => onDelete(r.id)}
+                  style={{ flex: isCompleted ? 'none' : 1, width: isCompleted ? 44 : 'auto', padding: '8px', borderRadius: 10, background: 'none', border: '1px solid var(--border-danger)', fontSize: 13, fontWeight: 600, color: 'var(--text-danger)', cursor: 'pointer', fontFamily: 'inherit' }}
+                >
+                  삭제
+                </button>
+              </div>
             </div>
           );
         })}
@@ -190,7 +206,17 @@ export default function ReportListScreen() {
       .finally(() => setLoading(false));
   }, []);
 
+  const handleDelete = async (reportId) => {
+    if (!window.confirm('이 보고서를 삭제하시겠습니까?')) return;
+    try {
+      await deleteReport(reportId);
+      setReports((prev) => prev.filter((r) => r.id !== reportId));
+    } catch (e) {
+      alert(e.message || '보고서 삭제에 실패했습니다.');
+    }
+  };
+
   return isDesktop
-    ? <DesktopReports reports={reports} loading={loading} error={error} navigate={navigate} />
-    : <MobileReports  reports={reports} loading={loading} error={error} navigate={navigate} />;
+    ? <DesktopReports reports={reports} loading={loading} error={error} navigate={navigate} onDelete={handleDelete} />
+    : <MobileReports  reports={reports} loading={loading} error={error} navigate={navigate} onDelete={handleDelete} />;
 }

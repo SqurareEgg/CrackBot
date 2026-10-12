@@ -4,8 +4,8 @@ import StatusBar from '../components/StatusBar.jsx';
 import TopBar from '../components/TopBar.jsx';
 import Badge from '../components/Badge.jsx';
 import AuthImage from '../components/AuthImage.jsx';
-import { getProject, getProjectGrades, updateProjectStatus } from '../api/projects.js';
-import { getZonePhotos } from '../api/photos.js';
+import { getProject, getProjectGrades, updateProjectStatus, deleteProject } from '../api/projects.js';
+import { getZonePhotos, deletePhoto } from '../api/photos.js';
 import { useResponsive } from '../hooks/useResponsive.js';
 
 const STATUS_MAP = {
@@ -50,11 +50,22 @@ function gradeBadgeVariant(g) {
 }
 
 /* ── Photo Detail Modal ─────────────────────────────────────────── */
-function PhotoModal({ photo, onClose }) {
+function PhotoModal({ photo, onClose, onDelete }) {
   const [showOverlay, setShowOverlay] = useState(true);
+  const [deleting, setDeleting] = useState(false);
 
   if (!photo) return null;
   const imgUrl = showOverlay ? photo.overlay_url : photo.image_url;
+
+  const handleDelete = async () => {
+    if (!window.confirm('이 사진을 삭제하시겠습니까? 탐지 결과도 함께 삭제됩니다.')) return;
+    setDeleting(true);
+    try {
+      await onDelete(photo.id);
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   return (
     <div
@@ -85,6 +96,13 @@ function PhotoModal({ photo, onClose }) {
                 ))}
               </div>
             )}
+            <button
+              onClick={handleDelete}
+              disabled={deleting}
+              style={{ padding: '5px 12px', borderRadius: 8, background: 'none', border: '1px solid var(--border-danger)', fontSize: 12, fontWeight: 600, color: 'var(--text-danger)', cursor: deleting ? 'default' : 'pointer', fontFamily: 'inherit', opacity: deleting ? 0.6 : 1 }}
+            >
+              {deleting ? '삭제 중...' : '삭제'}
+            </button>
             <button onClick={onClose} style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--bg-secondary)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="var(--text-secondary)" strokeWidth="1.8" strokeLinecap="round"/></svg>
             </button>
@@ -155,6 +173,16 @@ function ZonePhotosPanel({ zone }) {
       .finally(() => setLoading(false));
   }, [zone.id]);
 
+  const handleDeletePhoto = async (photoId) => {
+    try {
+      await deletePhoto(photoId);
+      setPhotos((prev) => prev.filter((p) => p.id !== photoId));
+      setSelectedPhoto(null);
+    } catch (e) {
+      alert(e.message || '사진 삭제에 실패했습니다.');
+    }
+  };
+
   if (loading) return <div style={{ padding: '16px 20px', fontSize: 13, color: 'var(--text-secondary)' }}>사진 불러오는 중...</div>;
   if (!photos?.length) return <div style={{ padding: '16px 20px', fontSize: 13, color: 'var(--text-secondary)' }}>이 구역에 저장된 사진이 없습니다.</div>;
 
@@ -185,13 +213,13 @@ function ZonePhotosPanel({ zone }) {
           </div>
         ))}
       </div>
-      {selectedPhoto && <PhotoModal photo={selectedPhoto} onClose={() => setSelectedPhoto(null)} />}
+      {selectedPhoto && <PhotoModal photo={selectedPhoto} onClose={() => setSelectedPhoto(null)} onDelete={handleDeletePhoto} />}
     </>
   );
 }
 
 /* ── Desktop ──────────────────────────────────────────────────── */
-function DesktopDetail({ project, grades, navigate, id, onStatusChange }) {
+function DesktopDetail({ project, grades, navigate, id, onStatusChange, onDeleteProject }) {
   const overallGrade = grades?.overall_grade;
   const totalDefects = grades?.total_defects ?? 0;
   const maxCrack = grades?.max_crack_mm;
@@ -220,6 +248,9 @@ function DesktopDetail({ project, grades, navigate, id, onStatusChange }) {
             </button>
             <button onClick={() => navigate(`/reports/settings/${id}`)} className="btn-primary" style={{ width: 'auto', padding: '8px 18px', fontSize: 13 }}>
               보고서 생성
+            </button>
+            <button onClick={onDeleteProject} style={{ width: 'auto', padding: '8px 18px', fontSize: 13, borderRadius: 10, background: 'none', border: '1px solid var(--border-danger)', color: 'var(--text-danger)', cursor: 'pointer', fontFamily: 'inherit' }}>
+              프로젝트 삭제
             </button>
           </div>
         </div>
@@ -306,7 +337,7 @@ function DesktopDetail({ project, grades, navigate, id, onStatusChange }) {
 }
 
 /* ── Mobile ───────────────────────────────────────────────────── */
-function MobileDetail({ project, grades, navigate, id, onStatusChange }) {
+function MobileDetail({ project, grades, navigate, id, onStatusChange, onDeleteProject }) {
   const overallGrade = grades?.overall_grade;
   const totalDefects = grades?.total_defects ?? 0;
   const maxCrack = grades?.max_crack_mm;
@@ -381,10 +412,16 @@ function MobileDetail({ project, grades, navigate, id, onStatusChange }) {
           </>
         )}
 
-        <div style={{ display: 'flex', gap: 12 }}>
+        <div style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
           <button onClick={() => navigate('/camera', { state: { projectId: id } })} className="btn-secondary" style={{ flex: 1 }}>촬영 / 분석</button>
           <button onClick={() => navigate(`/reports/settings/${id}`)} className="btn-primary" style={{ flex: 1 }}>보고서 생성</button>
         </div>
+        <button
+          onClick={onDeleteProject}
+          style={{ width: '100%', padding: '10px', borderRadius: 10, background: 'none', border: '1px solid var(--border-danger)', color: 'var(--text-danger)', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
+        >
+          프로젝트 삭제
+        </button>
       </div>
     </div>
   );
@@ -417,11 +454,21 @@ export default function ProjectDetailScreen() {
     }
   };
 
+  const handleDeleteProject = async () => {
+    if (!window.confirm('이 프로젝트를 삭제하시겠습니까? 관련 사진, 결함 데이터, 보고서가 모두 삭제됩니다.')) return;
+    try {
+      await deleteProject(id);
+      navigate('/projects');
+    } catch (e) {
+      alert(e.message || '프로젝트 삭제에 실패했습니다.');
+    }
+  };
+
   const bg = isDesktop ? 'var(--bg-secondary)' : 'var(--bg-primary)';
   if (loading) return <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: bg, color: 'var(--text-secondary)', fontSize: 14 }}>불러오는 중...</div>;
   if (error || !project) return <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: bg, color: 'var(--text-danger)', fontSize: 14 }}>{error || '프로젝트를 찾을 수 없습니다.'}</div>;
 
   return isDesktop
-    ? <DesktopDetail project={project} grades={grades} navigate={navigate} id={id} onStatusChange={handleStatusChange} />
-    : <MobileDetail  project={project} grades={grades} navigate={navigate} id={id} onStatusChange={handleStatusChange} />;
+    ? <DesktopDetail project={project} grades={grades} navigate={navigate} id={id} onStatusChange={handleStatusChange} onDeleteProject={handleDeleteProject} />
+    : <MobileDetail  project={project} grades={grades} navigate={navigate} id={id} onStatusChange={handleStatusChange} onDeleteProject={handleDeleteProject} />;
 }

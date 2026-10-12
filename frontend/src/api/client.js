@@ -103,4 +103,5 @@ export const api = {
     request(path, { method: 'PATCH', body: JSON.stringify(body) }),
   postForm: (path, formData) =>
     request(path, { method: 'POST', body: formData }),
+  delete: (path) => request(path, { method: 'DELETE' }),
 };

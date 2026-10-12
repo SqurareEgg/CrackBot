@@ -4,7 +4,7 @@ import StatusBar from '../components/StatusBar.jsx';
 import TopBar from '../components/TopBar.jsx';
 import BottomTabBar from '../components/BottomTabBar.jsx';
 import Badge from '../components/Badge.jsx';
-import { listProjects } from '../api/projects.js';
+import { listProjects, deleteProject } from '../api/projects.js';
 import { useResponsive } from '../hooks/useResponsive.js';
 
 const STATUS_MAP = {
@@ -21,7 +21,7 @@ const FILTERS = [
 ];
 
 /* ── Desktop ──────────────────────────────────────────────────── */
-function DesktopList({ activeFilter, setActiveFilter, search, setSearch, projects, loading, error, navigate }) {
+function DesktopList({ activeFilter, setActiveFilter, search, setSearch, projects, loading, error, navigate, onDelete }) {
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: 'var(--bg-secondary)' }}>
       {/* Toolbar */}
@@ -124,6 +124,12 @@ function DesktopList({ activeFilter, setActiveFilter, search, setSearch, project
                             >
                               상세
                             </button>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); onDelete(p.id); }}
+                              style={{ padding: '5px 12px', borderRadius: 6, background: 'none', border: '1px solid var(--border-danger)', fontSize: 12, color: 'var(--text-danger)', cursor: 'pointer', fontFamily: 'inherit' }}
+                            >
+                              삭제
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -147,7 +153,7 @@ function DesktopList({ activeFilter, setActiveFilter, search, setSearch, project
 }
 
 /* ── Mobile ───────────────────────────────────────────────────── */
-function MobileList({ activeFilter, setActiveFilter, search, setSearch, projects, loading, error, navigate }) {
+function MobileList({ activeFilter, setActiveFilter, search, setSearch, projects, loading, error, navigate, onDelete }) {
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--bg-primary)', minHeight: 0 }}>
       <StatusBar />
@@ -183,8 +189,16 @@ function MobileList({ activeFilter, setActiveFilter, search, setSearch, projects
                   <div style={{ flex: 1, paddingRight: 8, fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{p.title}</div>
                   <Badge variant={st.variant}>{st.label}</Badge>
                 </div>
-                <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
-                  {p.start_date} 시작 · 구역 {p.zones?.length ?? 0}개
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
+                    {p.start_date} 시작 · 구역 {p.zones?.length ?? 0}개
+                  </div>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onDelete(p.id); }}
+                    style={{ padding: '4px 10px', borderRadius: 6, background: 'none', border: '1px solid var(--border-danger)', fontSize: 12, color: 'var(--text-danger)', cursor: 'pointer', fontFamily: 'inherit' }}
+                  >
+                    삭제
+                  </button>
                 </div>
               </div>
             );
@@ -218,6 +232,16 @@ export default function ProjectListScreen() {
 
   const projects = all.filter((p) => p.title.toLowerCase().includes(search.toLowerCase()));
 
-  const props = { activeFilter, setActiveFilter, search, setSearch, projects, loading, error, navigate };
+  const handleDelete = async (projectId) => {
+    if (!window.confirm('이 프로젝트를 삭제하시겠습니까? 관련 사진, 결함 데이터, 보고서가 모두 삭제됩니다.')) return;
+    try {
+      await deleteProject(projectId);
+      setAll((prev) => prev.filter((p) => p.id !== projectId));
+    } catch (e) {
+      alert(e.message || '프로젝트 삭제에 실패했습니다.');
+    }
+  };
+
+  const props = { activeFilter, setActiveFilter, search, setSearch, projects, loading, error, navigate, onDelete: handleDelete };
   return isDesktop ? <DesktopList {...props} /> : <MobileList {...props} />;
 }

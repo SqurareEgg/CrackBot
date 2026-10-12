@@ -41,3 +41,8 @@ export async function getProjectZones(projectId) {
   const res = await api.get(`/v1/projects/${projectId}`);
   return res.data.zones || [];
 }
+
+export async function deleteProject(projectId) {
+  const res = await api.delete(`/v1/projects/${projectId}`);
+  return res.data;
+}

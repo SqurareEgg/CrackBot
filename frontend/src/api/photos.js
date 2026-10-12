@@ -5,6 +5,11 @@ export async function getZonePhotos(zoneId) {
   return res.data;
 }
 
+export async function deletePhoto(photoId) {
+  const res = await api.delete(`/v1/photos/${photoId}`);
+  return res.data;
+}
+
 export async function fetchImageBlob(url) {
   const token = getToken();
   const res = await fetch(url, {

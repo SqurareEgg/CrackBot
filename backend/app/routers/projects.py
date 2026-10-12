@@ -127,6 +127,39 @@ def update_project_status(
     return ok(_project_to_dict(project), message="프로젝트 상태가 업데이트되었습니다.")
 
 
+@router.delete("/{project_id}", status_code=status.HTTP_200_OK)
+def delete_project(
+    project_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Delete a project along with its zones, photos, detections, grades, and reports."""
+    from app.routers.photos import _local_image_path, _local_overlay_path
+    from app.routers.reports import _REPORTS_DIR
+
+    project = (
+        db.query(InspectionProject)
+        .filter(InspectionProject.id == project_id)
+        .first()
+    )
+    if not project:
+        raise HTTPException(status_code=404, detail="프로젝트를 찾을 수 없습니다.")
+
+    for zone in project.zones:
+        for photo in zone.photos:
+            _local_image_path(photo.id).unlink(missing_ok=True)
+            _local_overlay_path(photo.id).unlink(missing_ok=True)
+
+    for report in project.reports:
+        (_REPORTS_DIR / f"{report.id}.pdf").unlink(missing_ok=True)
+        (_REPORTS_DIR / f"{report.id}.docx").unlink(missing_ok=True)
+
+    db.delete(project)
+    db.commit()
+
+    return ok({"project_id": project_id}, message="프로젝트가 삭제되었습니다.")
+
+
 @router.get("/{project_id}/grades")
 def get_project_grades(
     project_id: str,

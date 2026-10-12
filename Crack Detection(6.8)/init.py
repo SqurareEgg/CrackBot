@@ -1,9 +1,11 @@
+import os
 
 from roboflow import Roboflow
 from ultralytics import YOLO
 
 def main():
-    rf = Roboflow(api_key="PGxruSLOJ1nKBd6dAMbA")
+    api_key = os.environ["ROBOFLOW_API_KEY"]
+    rf = Roboflow(api_key=api_key)
     project = rf.project("crack-wyt8q-akcdn")
     version = project.version(1)
     dataset = version.download("yolov8")

@@ -11,9 +11,48 @@ export default function CameraScreen() {
   const { isDesktop } = useResponsive();
   const projectId = location.state?.projectId;
   const fileInputRef = useRef(null);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const streamRef = useRef(null);
   const [preview, setPreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [dragging, setDragging] = useState(false);
+  const [cameraError, setCameraError] = useState('');
+
+  // Mobile: keep a live camera preview running until a photo is taken
+  useEffect(() => {
+    if (isDesktop || preview) return;
+    let active = true;
+    navigator.mediaDevices
+      .getUserMedia({ video: { facingMode: 'environment' }, audio: false })
+      .then((stream) => {
+        if (!active) { stream.getTracks().forEach((t) => t.stop()); return; }
+        streamRef.current = stream;
+        if (videoRef.current) videoRef.current.srcObject = stream;
+        setCameraError('');
+      })
+      .catch(() => setCameraError('카메라 권한을 허용해주세요.'));
+    return () => {
+      active = false;
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+      streamRef.current = null;
+    };
+  }, [isDesktop, preview]);
+
+  const handleCapture = () => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    if (!video || !canvas || !video.videoWidth) return;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const file = new File([blob], `capture-${Date.now()}.jpg`, { type: 'image/jpeg' });
+      setSelectedFile(file);
+      setPreview(URL.createObjectURL(file));
+    }, 'image/jpeg', 0.9);
+  };
 
   // Zone selection
   const [zones, setZones] = useState([]);
@@ -187,14 +226,22 @@ export default function CameraScreen() {
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#111110', position: 'relative', overflow: 'hidden' }}>
       <StatusBar dark />
-      <input ref={fileInputRef} type="file" accept="image/*" capture="environment" style={{ display: 'none' }} onChange={handleFileChange} />
+      <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+      <canvas ref={canvasRef} style={{ display: 'none' }} />
 
       <div style={{ flex: 1, position: 'relative' }}>
         {preview ? (
           <img src={preview} alt="선택된 사진" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
           <>
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #1a1a18 0%, #0d0d0c 100%)' }} />
+            <div style={{ position: 'absolute', inset: 0, background: '#0d0d0c' }} />
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+            />
             <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
               <div style={{ position: 'absolute', top: '20%', left: '8%', right: '8%', bottom: '22%' }}>
                 {[['top', 'left'], ['top', 'right'], ['bottom', 'left'], ['bottom', 'right']].map(([v, h]) => (
@@ -204,7 +251,7 @@ export default function CameraScreen() {
                   </div>
                 ))}
                 <div style={{ position: 'absolute', bottom: -28, left: 0, right: 0, textAlign: 'center', fontSize: 13, color: 'rgba(255,255,255,0.8)' }}>
-                  외벽 전면을 프레임 안에 맞춰주세요
+                  {cameraError || '외벽 전면을 프레임 안에 맞춰주세요'}
                 </div>
               </div>
             </div>
@@ -233,8 +280,8 @@ export default function CameraScreen() {
       <div style={{ background: '#111110', padding: '16px 24px 20px', flexShrink: 0 }}>
         {selectedFile ? (
           <div style={{ display: 'flex', gap: 12 }}>
-            <button onClick={() => fileInputRef.current?.click()} className="btn-secondary" style={{ flex: 1, color: '#fff', background: 'rgba(255,255,255,0.15)', border: 'none' }}>
-              다시 선택
+            <button onClick={() => { setPreview(null); setSelectedFile(null); }} className="btn-secondary" style={{ flex: 1, color: '#fff', background: 'rgba(255,255,255,0.15)', border: 'none' }}>
+              다시 찍기
             </button>
             <button onClick={handleAnalyze} className="btn-primary" style={{ flex: 1 }}>
               AI 분석 시작
@@ -249,7 +296,7 @@ export default function CameraScreen() {
                 <path d="M2 13l5-4 4 4 3-3 4 4" stroke="rgba(255,255,255,0.8)" strokeWidth="1.5" strokeLinejoin="round"/>
               </svg>
             </button>
-            <button onClick={() => fileInputRef.current?.click()} style={{ width: 68, height: 68, borderRadius: '50%', background: '#fff', border: '4px solid rgba(255,255,255,0.3)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <button onClick={handleCapture} disabled={!!cameraError} style={{ width: 68, height: 68, borderRadius: '50%', background: '#fff', border: '4px solid rgba(255,255,255,0.3)', cursor: cameraError ? 'default' : 'pointer', opacity: cameraError ? 0.4 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ width: 52, height: 52, borderRadius: '50%', background: '#fff', border: '2px solid rgba(0,0,0,0.1)' }} />
             </button>
             <div style={{ width: 44, height: 44 }} />

@@ -24,3 +24,8 @@ export async function getReportDownloadUrl(reportId, fileType = 'pdf') {
   const res = await api.get(`/v1/reports/${reportId}/download?file_type=${fileType}`);
   return res.data;
 }
+
+export async function deleteReport(reportId) {
+  const res = await api.delete(`/v1/reports/${reportId}`);
+  return res.data;
+}

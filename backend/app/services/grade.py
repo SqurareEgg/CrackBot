@@ -20,7 +20,7 @@ def calculate_grade(max_crack_mm: float | None, defect_count: int) -> str:
         return "C"
     if max_crack_mm >= 0.1:
         return "B"
-    return "A"
+    return "B" if defect_count > 0 else "A"
 
 
 def grade_recommendation(grade: str, max_crack_mm: float | None) -> str:

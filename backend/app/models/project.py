@@ -43,8 +43,8 @@ class InspectionProject(Base):
     zones = relationship(
         "InspectionZone", back_populates="project", cascade="all, delete-orphan"
     )
-    grades = relationship("SafetyGrade", back_populates="project")
-    reports = relationship("Report", back_populates="project")
+    grades = relationship("SafetyGrade", back_populates="project", cascade="all, delete-orphan")
+    reports = relationship("Report", back_populates="project", cascade="all, delete-orphan")
 
 
 class InspectionZone(Base):
