@@ -17,7 +17,11 @@ venv/
 backend/crackbot.db
 backend/uploads/
 backend/reports/
+autonomous/captures/
 *.log
+
+# 압축 백업본 (용량 큼, 재생성 가능)
+autonomous.zip
 
 # 사전학습 가중치 (자동 다운로드 가능)
 Crack Detection(6.8)/yolov8n.pt

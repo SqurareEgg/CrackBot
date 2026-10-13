@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CrackBot 자율주행 조작 패널</title>
+<style>
+  :root {
+    --bg: #111110; --panel: #1a1a18; --border: rgba(255,255,255,0.12);
+    --text: #f2f2ef; --text-dim: rgba(242,242,239,0.6);
+    --accent: #1D9E75; --danger: #E24B4A; --amber: #EF9F27;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    display: flex; flex-direction: column; align-items: center; gap: 16px;
+    padding: 16px 16px 40px;
+  }
+  h1 { font-size: 16px; font-weight: 700; margin: 4px 0 0; }
+  #status {
+    font-size: 13px; color: var(--text-dim); text-align: center; min-height: 18px;
+    max-width: 640px;
+  }
+  .cam-wrap {
+    width: 100%; max-width: 640px; aspect-ratio: 4/3; background: #000;
+    border-radius: 14px; overflow: hidden; border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cam-wrap img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+  .panel {
+    width: 100%; max-width: 640px; background: var(--panel); border: 1px solid var(--border);
+    border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 18px;
+  }
+
+  .dpad {
+    display: grid; grid-template-columns: 72px 72px 72px; grid-template-rows: 72px 72px 72px;
+    gap: 8px; justify-content: center;
+  }
+  .dpad button { grid-column: 2; }
+  .dpad button[data-dir="left"]  { grid-column: 1; grid-row: 2; }
+  .dpad button[data-dir="forward"]  { grid-row: 1; }
+  .dpad button[data-dir="stop"]     { grid-row: 2; background: var(--danger); }
+  .dpad button[data-dir="right"] { grid-column: 3; grid-row: 2; }
+  .dpad button[data-dir="backward"] { grid-row: 3; }
+
+  button {
+    font-family: inherit; font-size: 20px; font-weight: 700; color: #fff;
+    background: #2a2a27; border: 1px solid var(--border); border-radius: 12px;
+    cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
+  }
+  button:active { filter: brightness(1.3); }
+  button.active { background: var(--accent); }
+
+  .row { display: flex; align-items: center; gap: 12px; }
+  .row label { font-size: 13px; color: var(--text-dim); width: 64px; flex-shrink: 0; }
+  .row input[type="range"] { flex: 1; }
+  .row .val { width: 40px; text-align: right; font-size: 13px; font-variant-numeric: tabular-nums; }
+
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; }
+  .toggle-row span { font-size: 14px; font-weight: 600; }
+  .switch {
+    width: 52px; height: 28px; border-radius: 99px; background: #2a2a27;
+    border: 1px solid var(--border); position: relative; cursor: pointer; flex-shrink: 0;
+  }
+  .switch .knob {
+    position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; border-radius: 50%;
+    background: #fff; transition: left 0.15s;
+  }
+  .switch.on { background: var(--accent); }
+  .switch.on .knob { left: 28px; }
+
+  .exit-btn {
+    width: 100%; padding: 14px; font-size: 15px; background: var(--danger); border: none;
+    border-radius: 12px;
+  }
+
+  .led-dot { width: 10px; height: 10px; border-radius: 50%; background: #444; display: inline-block; margin-right: 6px; }
+  .led-dot.on { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+</style>
+</head>
+<body>
+
+<h1>CrackBot 자율주행 조작 패널</h1>
+<div id="status"><span class="led-dot" id="ledDot"></span><span id="statusText">연결 중...</span></div>
+<a href="/" id="reconnectLink" style="font-size:12px;color:var(--text-dim);text-decoration:underline;">⟲ 포트/카메라 다시 선택</a>
+
+<div class="cam-wrap">
+  <img id="cam" src="/stream" alt="camera stream">
+</div>
+
+<div class="panel">
+  <div class="dpad">
+    <button data-dir="forward">▲</button>
+    <button data-dir="left">◀</button>
+    <button data-dir="stop">■</button>
+    <button data-dir="right">▶</button>
+    <button data-dir="backward">▼</button>
+  </div>
+
+  <div class="row">
+    <label>속도</label>
+    <input type="range" id="speed" min="0" max="100" step="5" value="60">
+    <span class="val" id="speedVal">60</span>
+  </div>
+
+  <div class="row">
+    <label>각도</label>
+    <input type="range" id="angle" min="-90" max="90" step="5" value="0">
+    <span class="val" id="angleVal">0</span>
+  </div>
+
+  <div class="toggle-row">
+    <span>실시간 탐지</span>
+    <div class="switch" id="detectSwitch"><div class="knob"></div></div>
+  </div>
+
+  <button class="exit-btn" id="exitBtn">연결 해제</button>
+</div>
+
+<script>
+const statusText = document.getElementById('statusText');
+const ledDot = document.getElementById('ledDot');
+const dpadButtons = document.querySelectorAll('.dpad button');
+const speedInput = document.getElementById('speed');
+const speedVal = document.getElementById('speedVal');
+const angleInput = document.getElementById('angle');
+const angleVal = document.getElementById('angleVal');
+const detectSwitch = document.getElementById('detectSwitch');
+const exitBtn = document.getElementById('exitBtn');
+
+async function post(path, body) {
+  const res = await fetch(path, {
+    method: 'POST',
+    headers: body ? { 'Content-Type': 'application/json' } : undefined,
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  return res.json().catch(() => ({}));
+}
+
+dpadButtons.forEach((btn) => {
+  btn.addEventListener('click', async () => {
+    const dir = btn.dataset.dir;
+    await post(`/move/${dir}`);
+    dpadButtons.forEach((b) => b.classList.toggle('active', b === btn && dir !== 'stop'));
+  });
+});
+
+let speedDebounce = null;
+speedInput.addEventListener('input', () => {
+  speedVal.textContent = speedInput.value;
+  clearTimeout(speedDebounce);
+  speedDebounce = setTimeout(() => post('/speed', { value: Number(speedInput.value) }), 150);
+});
+
+let angleDebounce = null;
+angleInput.addEventListener('input', () => {
+  angleVal.textContent = angleInput.value;
+  clearTimeout(angleDebounce);
+  angleDebounce = setTimeout(() => post('/angle', { value: Number(angleInput.value) }), 150);
+});
+
+detectSwitch.addEventListener('click', async () => {
+  const enabling = !detectSwitch.classList.contains('on');
+  await post('/detect', { enabled: enabling });
+  detectSwitch.classList.toggle('on', enabling);
+});
+
+exitBtn.addEventListener('click', async () => {
+  if (!confirm('연결을 해제할까요? 모터가 정지하고 포트/카메라 선택 화면으로 돌아갑니다.')) return;
+  exited = true;
+  await post('/disconnect');
+  window.location.href = '/';
+});
+
+let exited = false;
+
+async function pollState() {
+  if (exited) return;
+  try {
+    const s = await (await fetch('/state')).json();
+    if (!s.connected) {
+      window.location.href = '/';
+      return;
+    }
+    statusText.textContent = s.status || '';
+    ledDot.classList.toggle('on', !!s.led_on);
+    dpadButtons.forEach((b) => {
+      const dir = b.dataset.dir;
+      b.classList.toggle('active', dir === s.current_move);
+    });
+    detectSwitch.classList.toggle('on', !!s.detecting);
+    if (document.activeElement !== speedInput) {
+      speedInput.value = s.speed;
+      speedVal.textContent = s.speed;
+    }
+    if (document.activeElement !== angleInput) {
+      angleInput.value = s.angle;
+      angleVal.textContent = s.angle;
+    }
+  } catch (e) {
+    statusText.textContent = '서버 연결 끊김';
+  }
+}
+setInterval(pollState, 500);
+pollState();
+</script>
+
+</body>
+</html>
