@@ -63,6 +63,34 @@ docker-compose up --build
 - 초기 계정: `admin@crackbot.ai` / `crackbot123` (개발용 시드 계정, `backend/app/main.py` 참고)
 - Python 3.10 이상 / Node.js 18 이상 권장
 
-## 성과 및 회고
+## 포트폴리오
 
-- (작성 예정)
+<img width="1280" height="720" alt="슬라이드1" src="https://github.com/user-attachments/assets/94a423e6-1526-41a3-b84e-0110b6975bce" />
+
+<img width="1280" height="720" alt="슬라이드2" src="https://github.com/user-attachments/assets/f7e03035-c6d0-4313-90fc-055d070f3e21" />
+
+<img width="1280" height="720" alt="슬라이드3" src="https://github.com/user-attachments/assets/0a7c7acd-ab88-401a-9249-2f7fd812d799" />
+
+<img width="1280" height="720" alt="슬라이드4" src="https://github.com/user-attachments/assets/820977e8-22a6-4da9-8de2-6c19ca218b65" />
+
+<img width="1280" height="720" alt="슬라이드5" src="https://github.com/user-attachments/assets/e331a76c-fb01-43a6-b0e1-de066e7a39d1" />
+
+<img width="1280" height="720" alt="슬라이드6" src="https://github.com/user-attachments/assets/04d9209f-aca1-4a97-8887-d4ce74187099" />
+
+<img width="1280" height="720" alt="슬라이드7" src="https://github.com/user-attachments/assets/7c2b1137-7637-48f0-918d-d31bc7a2ffd2" />
+
+<img width="1280" height="720" alt="슬라이드8" src="https://github.com/user-attachments/assets/36205517-7b8e-4e63-a44e-9f6af6584a82" />
+
+<img width="1280" height="720" alt="슬라이드9" src="https://github.com/user-attachments/assets/ba9b727a-54a1-451c-84a9-4188a9bcda53" />
+
+<img width="1280" height="720" alt="슬라이드10" src="https://github.com/user-attachments/assets/9db372bb-a2de-48d9-9b3a-584ff8d2ea30" />
+
+<img width="1280" height="720" alt="슬라이드11" src="https://github.com/user-attachments/assets/3b72d5c7-cc5c-4aad-ba34-7c4d06ea0195" />
+
+<img width="1280" height="720" alt="슬라이드12" src="https://github.com/user-attachments/assets/8b94eda2-a740-4078-8477-33ed61bea1b6" />
+
+<img width="1280" height="720" alt="슬라이드13" src="https://github.com/user-attachments/assets/cbee4245-cbf3-47e2-a105-b97f358a9e33" />
+
+<img width="1280" height="720" alt="슬라이드14" src="https://github.com/user-attachments/assets/c0ac1dc4-ceae-40cc-8780-b2a5ca6f164f" />
+
+<img width="1280" height="720" alt="슬라이드15" src="https://github.com/user-attachments/assets/8a1de9f8-dbfb-4219-9df1-db72d91675dd" />
